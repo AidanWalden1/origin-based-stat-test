@@ -39,7 +39,10 @@ for i in range(num_runs):
     
     
     # gets distance to the local maximum
-    results[i] = np.linalg.norm(res[0] - np.ones_like(x0))
+    # for rose brock as there is a there is a min of 0 where all inputs are 1
+    # results[i] = np.linalg.norm(res[0] - np.ones_like(x0))
+    # for rastagin a global minimum where all input are equal to 1
+    results[i] = np.linalg.norm(res[0])
     
 # Calculate mean distance and std deviation
 mean_distance = np.mean(results)
