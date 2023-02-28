@@ -1,0 +1,50 @@
+import numpy as np
+import cma
+import matplotlib.pyplot as plt
+
+# Define the function to optimize
+def rosenbrock(x):
+    return np.sum(100.0 * (x[1:] - x[:-1]**2)**2 + (1 - x[:-1])**2)
+
+# Define the starting point
+x0 = np.array([1.2, 1.2])
+
+# Define the maximum number of function evaluations for each run
+max_evals = 1000
+
+# Define the step size for shifting the starting point
+delta_i = 0.1
+
+# Define the number of runs to perform
+num_runs = 10
+
+# Initialize an array to store the optimization results
+results = np.zeros(num_runs)
+
+# Perform the optimization runs
+for i in range(num_runs):
+    # Define the shifted starting point
+    x0_shifted = x0 + delta_i * i
+    
+    # Use the CMA-ES algorithm to optimize the function
+    res = cma.fmin(rosenbrock, x0_shifted, 0.1, {'maxfevals': max_evals})
+    
+    # Store the distance to the local maximum
+    results[i] = np.linalg.norm(res[0] - np.ones_like(x0))
+    
+# Calculate the mean and standard deviation of the distances
+mean_distance = np.mean(results)
+std_distance = np.std(results)
+
+# Print the results
+print("Mean distance to local maximum: {:.4f}".format(mean_distance))
+print("Standard deviation of distances: {:.4f}".format(std_distance))
+
+# Plot the results
+fig, ax = plt.subplots()
+ax.plot(np.arange(num_runs) * delta_i, results, 'o-', label='CMA-ES')
+ax.axhline(y=mean_distance, color='gray', linestyle='--', label='Mean distance')
+ax.set_xlabel('Starting point')
+ax.set_ylabel('Distance to local maximum')
+ax.legend()
+plt.show()
