@@ -49,14 +49,14 @@ mean_distance = np.mean(results)
 std_distance = np.std(results)
 
 # Print the results
-print("Mean distance to local maximum: {:.4f}".format(mean_distance))
-print("Standard deviation of distances: {:.4f}".format(std_distance))
+# print("Mean distance to local maximum: {:.4f}".format(mean_distance))
+# print("Standard deviation of distances: {:.4f}".format(std_distance))
 
-# Plot the results
-fig, ax = plt.subplots()
-ax.plot(np.arange(num_runs) * delta_i, results, 'o-', label='CMA-ES')
-ax.axhline(y=mean_distance, color='gray', linestyle='--', label='Mean distance')
-ax.set_xlabel('Starting point')
-ax.set_ylabel('Distance to local maximum')
-ax.legend()
-plt.show()
+# # Plot the results
+# fig, ax = plt.subplots()
+# ax.plot(np.arange(num_runs) * delta_i, results, 'o-', label='CMA-ES')
+# ax.axhline(y=mean_distance, color='gray', linestyle='--', label='Mean distance')
+# ax.set_xlabel('Starting point')
+# ax.set_ylabel('Distance to local maximum')
+# ax.legend()
+# plt.show()

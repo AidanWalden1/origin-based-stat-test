@@ -1,0 +1,50 @@
+import numpy as np
+import cma
+from scipy import stats
+
+np.set_printoptions(precision=100)
+
+# define the sum of squares function
+def sum_of_squares(x):
+    return np.sum(x**2)
+
+num_runs = 10
+max_evals = 1000
+
+# define the start point
+x0 = np.array([10, 0])
+
+x1 = np.array([0, 6])
+
+x2 = np.random.randint(100, size=(2))
+
+x3 = np.random.randint(100, size=(2))
+
+
+def optimze(startpoint):
+    results = np.zeros((num_runs), float)
+    print("start points= ", startpoint)
+    # run the CMA-ES optimizer with the given parameters
+    for i in range(num_runs):
+
+        result = cma.fmin(sum_of_squares, startpoint, 0.1, {'maxfevals': max_evals, 'verbose':-9})
+
+        # print the best solution found
+        length = np.linalg.norm(result[0] - startpoint)
+        # print('Best solution found: {}'.format(result[0]))
+        # print ('length =', length)
+        results[i] = length
+    return results
+
+def test(p1,p2):
+    res1 = stats.ttest_ind(p2,p1)
+    res2 = stats.wilcoxon(p2,p1)
+    print("p-value when using t-test",res1)
+    print("p-value when using wilcoxon",res2, "\n")
+
+
+
+
+test(optimze(x0),optimze(x1))
+test(optimze(x2),optimze(x3))
+
