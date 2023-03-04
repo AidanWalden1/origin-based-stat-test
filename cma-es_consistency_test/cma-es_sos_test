@@ -8,13 +8,13 @@ np.set_printoptions(precision=100)
 def sum_of_squares(x):
     return np.sum(x**2)
 
-num_runs = 10
+num_runs = 100
 max_evals = 1000
 
 # define the start point
 x0 = np.array([10, 0])
 
-x1 = np.array([0, 6])
+x1 = np.array([0, 9.5])
 
 x2 = np.random.randint(100, size=(2))
 
@@ -34,6 +34,7 @@ def optimze(startpoint):
         # print('Best solution found: {}'.format(result[0]))
         # print ('length =', length)
         results[i] = length
+    print(results)
     return results
 
 def test(p1,p2):
@@ -46,5 +47,5 @@ def test(p1,p2):
 
 
 test(optimze(x0),optimze(x1))
-test(optimze(x2),optimze(x3))
+# test(optimze(x2),optimze(x3))
 
