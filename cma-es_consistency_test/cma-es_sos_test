@@ -9,12 +9,12 @@ def sum_of_squares(x):
     return np.sum(x**2)
 
 num_runs = 100
-max_evals = 1000
+max_evals = 100
 
 # define the start point
 x0 = np.array([10, 0])
 
-x1 = np.array([0, 9.5])
+x1 = np.array([0, 5])
 
 x2 = np.random.randint(100, size=(2))
 
@@ -23,14 +23,14 @@ x3 = np.random.randint(100, size=(2))
 
 def optimze(startpoint):
     results = np.zeros((num_runs), float)
-    print("start points= ", startpoint)
+    print("start points = ", startpoint)
     # run the CMA-ES optimizer with the given parameters
     for i in range(num_runs):
 
         result = cma.fmin(sum_of_squares, startpoint, 0.1, {'maxfevals': max_evals, 'verbose':-9})
 
         # print the best solution found
-        length = np.linalg.norm(result[0] - startpoint)
+        length = np.linalg.norm(result[0])
         # print('Best solution found: {}'.format(result[0]))
         # print ('length =', length)
         results[i] = length
