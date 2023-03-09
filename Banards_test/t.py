@@ -9,8 +9,12 @@ def dummy_objective_function(x):
     return 0
 
 num_runs =100
-options = {'maxiter': 50, 'verbose': -1, 'maxfevals': 1000,'bounds':([-5, -5], [10, 12])}
-cma_es = CMAEvolutionStrategy([0, 0], 2, options)
+start_point = ([np.random.uniform(low=-6, high=10),np.random.uniform(low=-2, high=12)])
+
+
+options = {'maxiter': 50, 'verbose': -1, 'maxfevals': 1000,'bounds':([-6, -2], [10, 12])}
+cma_es = CMAEvolutionStrategy(start_point, 7, options)
+
 solutions = []
 
 for i in range(num_runs):
@@ -25,4 +29,6 @@ y = solutions[:, 1]
 
 
 plt.scatter(x, y)
+plt.xlim(-6,10)
+plt.ylim(-2,12)
 plt.show()
