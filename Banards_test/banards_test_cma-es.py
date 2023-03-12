@@ -1,43 +1,74 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import cma
+from cma.fitness_functions import ff
+from optimizers.cma_es import CMAESOptimizer
 
-# Define the objective function to optimize
-def objective_function(x):
-    return np.abs(x[0] + 1j*x[1])**2
+iterations = 150
+num_tests = 150
 
-# Define the callback function to record the best point in each iteration
-random_individuals = []
-def callback_function(cma_es):
-    new_individuals = cma_es.ask()
-    random_individual = new_individuals[np.random.randint(len(new_individuals))]
-    random_individuals.append(random_individual)
+
+random_individuals = np.empty(num_tests,dtype=object)
 
 def dummy_objective_function(x):
     return 0
 
-# Define the initial guess for the optimization
-initial_guess = np.array([5.0, 5.0])
 
-# Define the options for the optimization
-options = {'maxiter': 50, 'verbose': -1, 'maxfevals': 1000}
+xmin, xmax = -10, 25
+ymin, ymax = -8, 15
 
-cma_es = cma.CMAEvolutionStrategy(initial_guess, 0.5, options)
+bounds = [[xmin, xmax], [ymin, ymax]]
+cmaesOptimizer = CMAESOptimizer()
 
-# Optimize the objective function using the CMA-ES algorithm
-cma_es.optimize(objective_function, callback=callback_function)
 
-# Print the result of the optimization
-result = cma_es.best.get()[0]
-print('Best point found: {}'.format(result))
+for z in range(num_tests):
+    random_individuals[z] = cmaesOptimizer.CMAESOptimizer(dummy_objective_function,bounds)
 
-# Generate a graph showing the best point in each iteration
-random_individuals = np.array(random_individuals)
-fig, ax = plt.subplots()
-# ax.plot(initial_guess)
-ax.plot(random_individuals[:, 0], random_individuals[:, 1], 'bo-', linestyle='none')
-# ax.plot(result[0], result[1], 'r*', markersize=10)
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_title('CMA-ES Optimization')
+
+# print(random_individuals)
+solutions = np.stack(random_individuals)
+
+
+
+x = solutions[:, 0]
+y = solutions[:, 1]
+plt.scatter(x, y)
+
+plt.xlim(xmin, xmax)
+plt.ylim(ymin, ymax)
+
+
+########################################
+
+m = (ymax - ymin)/(xmax-xmin)
+print('m = ', m )
+b = (ymax - (m*xmax))
+print('b = ', b)
+
+x = np.linspace(xmin, xmax)
+y = m * x + b
+plt.plot(x, y, color="green")
+
+# above = yes
+above_counter = 0
+
+# below = no
+below_counter = 0
+
+for point in random_individuals:
+
+    x = point[0]
+    y = point[1]
+
+    if y > m * x + b:
+        above_counter += 1
+    elif y < m * x + b:
+        below_counter += 1
+
+
+print("above=", above_counter)
+print("below=", below_counter)
+
+
+# print("p-val?=", abs_num_above / abs_num_below)
+# print("p-val?=", abs_num_below / abs_num_above)
 plt.show()
