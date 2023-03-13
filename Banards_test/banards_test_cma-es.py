@@ -2,10 +2,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 from cma.fitness_functions import ff
 from optimizers.cma_es import CMAESOptimizer
+from optimizers.woa import WoaOptimizer
 
 iterations = 150
 num_tests = 150
 
+
+def eggholder(X, Y):
+    """constraints=512, minimum f(512, 414.2319)=-959.6407"""
+    y = Y+47.0
+    a = (-1.0)*(y)*np.sin(np.sqrt(np.absolute((X/2.0) + y)))
+    b = (-1.0)*X*np.sin(np.sqrt(np.absolute(X-y)))
+    return a+b
 
 random_individuals = np.empty(num_tests,dtype=object)
 
@@ -17,14 +25,18 @@ xmin, xmax = -10, 25
 ymin, ymax = -8, 15
 
 bounds = [[xmin, xmax], [ymin, ymax]]
-cmaesOptimizer = CMAESOptimizer()
+cmaes = CMAESOptimizer()
+woa = WoaOptimizer()
 
 
 for z in range(num_tests):
-    random_individuals[z] = cmaesOptimizer.CMAESOptimizer(dummy_objective_function,bounds)
+    random_individuals[z] = woa.woaOptimizer(eggholder,bounds)
+    random_individuals[z] = cmaes.cmaesOptimizer(dummy_objective_function,bounds)
 
 
-# print(random_individuals)
+
+
+
 solutions = np.stack(random_individuals)
 
 
