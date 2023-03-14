@@ -6,7 +6,7 @@ class CMAESOptimizer:
     def __init__(self, iterations=100):
         self.iterations = iterations
 
-    def cmaesOptimizer(self, obj_function, bounds):
+    def cmaesOptimizer(self, bounds, obj_function):
         start_points = [np.random.uniform(low=bounds[0][0], high=bounds[0][1]), np.random.uniform(low=bounds[1][0], high=bounds[1][1])]
         options = {'maxiter': 50, 'verbose': -9, 'bounds': ([bounds[0][0], bounds[1][0]], [bounds[0][1], bounds[1][1]]), 'maxfevals': 1000}
         optimizer = cma.CMAEvolutionStrategy(start_points, 8, options)
