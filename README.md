@@ -1,4 +1,5 @@
 # MMP
-
-![alt text](https://github.com/AidanWalden1/MMP/blob/master/image.PNG)
-![alt text](https://github.com/AidanWalden1/MMP/blob/master/image2.PNG)
+cma-es
+![alt text](https://github.com/AidanWalden1/MMP/blob/master/cmaes.PNG)
+woa
+![alt text](https://github.com/AidanWalden1/MMP/blob/master/woa.PNG)

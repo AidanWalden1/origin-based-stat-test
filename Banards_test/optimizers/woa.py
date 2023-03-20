@@ -1,3 +1,5 @@
+import sys
+sys.path.append('C:/Users/Aidan/OneDrive/Documents/MMP/Banards_test/optimizers/')
 from woa_pkg.whale_optimization import WhaleOptimization
 import numpy as np
 

@@ -68,8 +68,8 @@ def graph(optimizer):
     
 
     for z in range(num_tests):
-        random_individuals[z] = woa.woaOptimizer(bounds,bimodal_objective)
-        #random_individuals[z] = cmaes.cmaesOptimizer(bounds,bimodal_objective)
+        # random_individuals[z] = woa.woaOptimizer(bounds,bimodal_objective)
+        random_individuals[z] = cmaes.cmaesOptimizer(bounds,bimodal_objective)
         
         
     solutions = np.stack(random_individuals)
