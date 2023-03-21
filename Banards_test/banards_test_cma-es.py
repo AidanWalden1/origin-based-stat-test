@@ -6,12 +6,12 @@ from optimizers.cma_es import CMAESOptimizer
 from optimizers.woa import WoaOptimizer
 from banards import BarnardTest
 from prettytable import PrettyTable
+from math import factorial
 
+num_tests = 2000
 
-num_tests = 500
-
-xmin, xmax = -1, 7
-ymin, ymax = -3, 5
+xmin, xmax = -10, 10
+ymin, ymax = -8, 15
 
 random_individuals = np.empty(num_tests, dtype=object)
 
@@ -71,9 +71,6 @@ def graph(optimizer):
     for point in random_individuals:
         x = point[0]
         y = point[1]
-
-        if x>1.5:
-            t=t+1
         expected_y = m1*x +b1
 
         if y > expected_y:
@@ -101,35 +98,34 @@ def graph(optimizer):
     plt.ylim(ymin, ymax)
     plt.plot(x1, y1, color="green")
 
-    # plt.show()
+    plt.show()
 
     return np.array([below_points, above_points], dtype=object)
 
 
 woa_res = graph(woa.woaOptimizer)
 cma_res = graph(cmaes.cmaesOptimizer)
+# a = len(woa_res[0])
+# b = len(cma_res[0])
+# c = len(woa_res[1])
+# d = len(cma_res[1])
+
+# table = PrettyTable()
+# table.field_names = ["", "woa", "cma-es"]
+# table.add_row(["below", a, b])
+# table.add_row(["above", c, d])
+
+
+# p_val = stats.barnard_exact([[a, b], [c, d]])
+# print(table)
+# print("p-value= ", p_val.pvalue)
+
+
+
 a = len(woa_res[0])
-b = len(cma_res[0])
+b = num_tests/2
 c = len(woa_res[1])
-d = len(cma_res[1])
-
-table = PrettyTable()
-table.field_names = ["", "woa", "cma-es"]
-table.add_row(["below", a, b])
-table.add_row(["above", c, d])
-
-ban = BarnardTest(a, b, c, d)
-pval = ban.p_value()
-p_val = stats.barnard_exact([[a, b], [c, d]])
-print(table)
-print("p-value= ", p_val.pvalue)
-print("p-value= ", pval)
-
-
-a = len(woa_res[0])
-b = 250
-c = len(woa_res[1])
-d = 250
+d = num_tests/2
 
 table = PrettyTable()
 table.field_names = ["", "woa", "norm"]
@@ -137,29 +133,24 @@ table.add_row(["below", a, b])
 table.add_row(["above", c, d])
 
 
-ban = BarnardTest(a, b, c, d)
-pval = ban.p_value()
 p_val = stats.barnard_exact([[a, b], [c, d]])
 print(table)
 print("p-value= ", p_val.pvalue)
-print("p-value= ", pval)
 
 
 a = len(cma_res[0])
-b = 250
+b = num_tests/2
 c = len(cma_res[1])
-d = 250
+d = num_tests/2
 
 table = PrettyTable()
 table.field_names = ["", "cma", "norm"]
 table.add_row(["below", a, b])
 table.add_row(["above", c, d])
 
-ban = BarnardTest(a, b, c, d)
-pval = ban.p_value()
 p_val = stats.barnard_exact([[a, b], [c, d]])
 print(table)
 print("p-value= ", p_val.pvalue)
-print("p-value= ", pval)
+
 
 # graph(cmaes.cmaesOptimizer(bimodal_objective,bounds))
