@@ -18,7 +18,7 @@ class WoaOptimizer:
         a=2
         a_step = a/self.iterations
         
-        woa = WhaleOptimization(opt_func=lambda x, y: objective_function_wrapper(x, y, obj), constraints=bounds, nsols=30, b=1, a=a, a_step=a_step)
+        woa = WhaleOptimization(opt_func=lambda x, y: objective_function_wrapper(x, y, obj), constraints=bounds, nsols=50, b=1, a=a, a_step=a_step)
 
         for i in range(self.iterations):
             woa.optimize()
