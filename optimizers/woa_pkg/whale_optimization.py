@@ -76,14 +76,15 @@ class WhaleOptimization():
         return [ s[1] for s in ranked_sol] 
 
     def print_best_solutions(self):
-        print('generation best solution history')
-        print('([fitness], [solution])')
-        for s in self._best_solutions:
-            print(s)
-        print('\n')
-        print('best solution')
-        print('([fitness], [solution])')
-        print(sorted(self._best_solutions, key=lambda x:x[0], reverse=self._maximize)[0])
+        # print('generation best solution history')
+        # print('([fitness], [solution])')
+        # for s in self._best_solutions:
+        #     print(s)
+        # print('\n')
+        # print('best solution')
+        # print('([fitness], [solution])')
+        # print(sorted(self._best_solutions, key=lambda x:x[0], reverse=self._maximize)[0])
+        return self._best_solutions
 
     def _compute_A(self):
         r = np.random.uniform(0.0, 1.0, size=2)

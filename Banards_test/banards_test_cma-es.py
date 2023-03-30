@@ -1,62 +1,36 @@
+import os
+import sys
+script_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
+sys.path.append(parent_dir)
+
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 
 from optimizers.cma_es import CMAESOptimizer
 from optimizers.woa import WoaOptimizer
-from banards import BarnardTest
 from prettytable import PrettyTable
-from math import factorial
+from obj_function import Obj_function
 
-num_tests = 2000
+num_tests = 500
 
 xmin, xmax = -10, 10
 ymin, ymax = -8, 15
+bounds = [[xmin, xmax], [ymin, ymax]]
 
 random_individuals = np.empty(num_tests, dtype=object)
 
-bounds = [[xmin, xmax], [ymin, ymax]]
 cmaes = CMAESOptimizer()
 woa = WoaOptimizer()
+obj_fun = Obj_function(bounds)
 
 
-m1 = (ymax - ymin)/(xmax-xmin)
-b1 = (ymax - (m1*xmax))
 
-x1 = np.linspace(xmin, xmax)
-y1 = m1 * x1 + b1
+def banard_test(optimizer):
 
-m2 = -1 * m1
-b2 = 0
-x2 = np.linspace(xmin, xmax)
-y2 = m2 * x2 + b2
-# plt.plot(x2, y2, color="blue")
-
-
-x3 = (b2-b1)/(m1-m2)
-y3 = m1*x3 + b1
-
-x3 = x3*2
-y3 = y3*2
-
-
-def bimodal_objective(x):
-    """
-    Computes the value of a bimodal objective function at point x.
-    x: A numpy array of length 2, representing the coordinates (x, y) of the point.
-    """
-    x1, x2 = x
-    f1 = (x1 - 0)**2 + (x2 - 0)**2
-    f2 = (x1 - x3)**2 + (x2 - y3)**2
-    f = np.minimum(f1, f2)
-    return f
-
-
-def graph(optimizer):
-
-    for z in range(num_tests):
-        random_individuals[z] = optimizer(bounds, bimodal_objective)
-
+    for i in range(num_tests):
+        random_individuals[i], best_fit = optimizer(bounds, obj_fun.bimodal_objective)
     # above = yes
     above_counter = 0
 
@@ -67,11 +41,10 @@ def graph(optimizer):
     above_points = np.empty((0, 2), float)
     below_points = np.empty((0, 2), float)
 
-    t=0
     for point in random_individuals:
         x = point[0]
         y = point[1]
-        expected_y = m1*x +b1
+        expected_y = obj_fun.get_expected_y(x)
 
         if y > expected_y:
             above_counter = above_counter + 1
@@ -83,11 +56,6 @@ def graph(optimizer):
             print("not in range")
             range_counter += 1
 
-    print("above=", above_counter)
-    print("below=", below_counter)
-    print("t(below) =",t)
-    # print("not in range =", range_counter)
-
     solutions = np.stack(random_individuals)
     xpoints = solutions[:, 0]
     ypoints = solutions[:, 1]
@@ -96,61 +64,30 @@ def graph(optimizer):
 
     plt.xlim(xmin, xmax)
     plt.ylim(ymin, ymax)
-    plt.plot(x1, y1, color="green")
+    plt.plot(obj_fun.x1, obj_fun.y1, color="green")
+
+    a = len(below_points)
+    b = num_tests/2
+    c = len(above_points)
+    d = num_tests/2
+
+    table = PrettyTable()
+    table.field_names = ["", "optimizer", "norm"]
+    table.add_row(["below", a, b])
+    table.add_row(["above", c, d])
+
+
+    p_val = stats.barnard_exact([[a, b], [c, d]])
+    print(table)
+    print("p-value= ", p_val.pvalue)
+
+
 
     plt.show()
 
     return np.array([below_points, above_points], dtype=object)
 
-
-woa_res = graph(woa.woaOptimizer)
-cma_res = graph(cmaes.cmaesOptimizer)
-# a = len(woa_res[0])
-# b = len(cma_res[0])
-# c = len(woa_res[1])
-# d = len(cma_res[1])
-
-# table = PrettyTable()
-# table.field_names = ["", "woa", "cma-es"]
-# table.add_row(["below", a, b])
-# table.add_row(["above", c, d])
+banard_test(cmaes.cmaesOptimizer)
+banard_test(woa.woaOptimizer)
 
 
-# p_val = stats.barnard_exact([[a, b], [c, d]])
-# print(table)
-# print("p-value= ", p_val.pvalue)
-
-
-
-a = len(woa_res[0])
-b = num_tests/2
-c = len(woa_res[1])
-d = num_tests/2
-
-table = PrettyTable()
-table.field_names = ["", "woa", "norm"]
-table.add_row(["below", a, b])
-table.add_row(["above", c, d])
-
-
-p_val = stats.barnard_exact([[a, b], [c, d]])
-print(table)
-print("p-value= ", p_val.pvalue)
-
-
-a = len(cma_res[0])
-b = num_tests/2
-c = len(cma_res[1])
-d = num_tests/2
-
-table = PrettyTable()
-table.field_names = ["", "cma", "norm"]
-table.add_row(["below", a, b])
-table.add_row(["above", c, d])
-
-p_val = stats.barnard_exact([[a, b], [c, d]])
-print(table)
-print("p-value= ", p_val.pvalue)
-
-
-# graph(cmaes.cmaesOptimizer(bimodal_objective,bounds))
