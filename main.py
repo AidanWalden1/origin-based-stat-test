@@ -72,7 +72,6 @@ class MyMainWindow(QMainWindow):
     # update the label when the combo box selection changes
         global selected_alg
         selected_alg = self.combobox.currentText()
-        print(selected_alg)
 
 
 if __name__ == '__main__':
