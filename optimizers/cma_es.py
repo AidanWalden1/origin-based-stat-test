@@ -6,7 +6,7 @@ class CMAESOptimizer:
     def __init__(self, iterations=100):
         self.iterations = iterations
 
-    def cmaesOptimizer(self, bounds, obj_function):
+    def optimize(self, bounds, obj_function):
         best_fit =[]
         start_points = [np.random.uniform(low=bounds[0][0], high=bounds[0][1]), np.random.uniform(low=bounds[1][0], high=bounds[1][1])]
         options = {'maxiter': 50, 'verbose': -9, 'bounds': ([bounds[0][0], bounds[1][0]], [bounds[0][1], bounds[1][1]]), 'maxfevals': 1000}
@@ -17,6 +17,8 @@ class CMAESOptimizer:
             fitness = [obj_function(x) for x in solutions]
             best_solution =np.min(fitness)
             best_fit.append(best_solution)
+            # if best_solution <1.0e-09: 
+            #     return solutions[np.random.randint(len(solutions))],best_fit
             optimizer.tell(solutions, fitness)
 
 

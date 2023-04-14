@@ -1,0 +1,9 @@
+NumPy
+SciPy
+sklearn
+pandas
+matplotlib
+fcmaes
+cma
+PyQt5
+matplotlib

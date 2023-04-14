@@ -9,13 +9,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 import random
+from matplotlib.figure import Figure
+
 
 from optimizers.cma_es import CMAESOptimizer
 from optimizers.woa import WoaOptimizer
+
+from optimizers.EvoloPy_optimzers import EvoloPy_otimizers
+
 from prettytable import PrettyTable
 from obj_function import Obj_function
+from scipy.stats import wilcoxon
 
-from scipy.stats import ranksums, combine_pvalues
+from scipy.stats import ranksums, combine_pvalues,mannwhitneyu
 
 num_tests = 500
 
@@ -24,14 +30,24 @@ ymin, ymax = -8, 15
 bounds = [[xmin, xmax], [ymin, ymax]]
 
 cmaes = CMAESOptimizer()
-woa = WoaOptimizer()
+original_woa = WoaOptimizer()
+wooa = WoaOptimizer()
+
+# BAT/CS/DE/FFA/HHO/JAYA/WOA
+bat = EvoloPy_otimizers('BAT')
+cs = EvoloPy_otimizers('CS')
+de = EvoloPy_otimizers('DE')
+ffa = EvoloPy_otimizers('FFA')
+hho = EvoloPy_otimizers('HHO')
+jaya = EvoloPy_otimizers('JAYA')
+evolo_woa = EvoloPy_otimizers('WOA')
 obj_fun = Obj_function(bounds)
 
 random_individuals = np.empty(num_tests, dtype=object)
 best_fit = np.empty(num_tests, dtype=object)
 
 
-fig, (abv, bel) = plt.subplots(2, 1)
+# fig, (abv, bel) = plt.subplots(2, 1)
 
 def asymmetry_test(optimizer):
     
@@ -39,7 +55,10 @@ def asymmetry_test(optimizer):
     above_arr =[]
 
     for i in range(num_tests):
+        # print(optimizer(bounds, obj_fun.bimodal_objective))
         random_individuals[i], best_fit[i] = optimizer(bounds, obj_fun.bimodal_objective)
+        # print(random_individuals[i])
+        # print(best_fit[i])
 
     for i,(point) in enumerate(random_individuals):
         x = point[0]
@@ -50,43 +69,102 @@ def asymmetry_test(optimizer):
         log_arr = np.log(best_fit[i])
 
         # Add labels and title
-        abv.set_ylabel('fitness')
-        abv.set_title('Plot when optimzer tends to other maxima')
+        # abv.set_ylabel('fitness')
+        # abv.set_title('Plot when optimzer tends to other maxima')
 
-        bel.set_ylabel('fitness')
-        bel.set_title('Plot when optimzer tends to 0,0')
+        # bel.set_ylabel('fitness')
+        # bel.set_title('Plot when optimzer tends to 0,0')
 
         # Display the plot
 
 
         if y > expected_y:
             above_arr.append(log_arr)
-            abv.plot(indices,log_arr)
+            # abv.plot(indices,log_arr)
         elif y < expected_y:
             below_arr.append(log_arr)
-            bel.plot(indices, log_arr)
+            # bel.plot(indices, log_arr)
 
 
 
+    above_reordered_list = [list(x) for x in zip(*above_arr)]
+    # print(above_reordered_list)
+    below_reordered_list = [list(x) for x in zip(*below_arr)]
+    # print("/////////////////////////////////////////////////////////")
+    # print(below_reordered_list)
+
+    abv_len = len(above_reordered_list[0])
+    bel_len = len(below_reordered_list[0])
+
+    # print(bel_len)
+    # print(abv_len)
+
+    for i in range(len(above_reordered_list)):
+        if abv_len>bel_len:
+            length = bel_len
+        elif bel_len>abv_len:
+            length = abv_len
+        else:
+            break
+
+     
+
+        above_reordered_list[i] = above_reordered_list[i][:length]
+
+  
+        below_reordered_list[i] = below_reordered_list[i][:length]
+
+    # print('//////////////////////edited///////////////////////////////')
+    # print(above_reordered_list)
+    # print("/////////////////////////////////////////////////////////")
+    # print(below_reordered_list)
 
 
 
+    # Compute the rank sum test
+    comparisons = len(above_reordered_list)
 
-    _, p_value = ranksums(above_arr, below_arr)
-    p_combined = combine_pvalues(p_value, method='fisher')[1]
-    # print("Combined p-value:", p_combined)
-    return p_combined
+    p_values = [ranksums(above_reordered_list[i], below_reordered_list[i]).pvalue for i in range(comparisons)]
+    log_p_values = -np.log10(p_values)
+
+    adjusted_p_values = np.minimum(1, np.array(p_values) * comparisons) # adjust p-values
+    min_p_value = np.min(adjusted_p_values) 
+
+    # plt.plot(log_p_values)
+    # plt.ylabel('-log10(p)')
+    # plt.xlabel('t')
+    fig = Figure()
+    ax = fig.add_subplot(111)
+    ax.plot(log_p_values)
+    ax.set_ylabel('-log10(p)')
+    ax.set_xlabel('t')
+    
+
+    return fig, min_p_value
+    
+    
+    
         
 
-    # plt.show()
+# bat = EvoloPy_otimizers('BAT')
+# cs = EvoloPy_otimizers('CS')
+# de = EvoloPy_otimizers('DE')
+# ffa = EvoloPy_otimizers('FFA')
+# hho = EvoloPy_otimizers('HHO')
+# jaya = EvoloPy_otimizers('JAYA')
+# woa = EvoloPy_otimizers('WOA')
 
-            
+# for i in range(1): 
+#     print(f"woa - {asymmetry_test(original_woa.woaOptimizer)}")
+#     print(f"cmaes - {asymmetry_test(cmaes.cmaesOptimizer)}")
+#     print(f"Evolo woa - {asymmetry_test(evolo_woa.optimize)}")
+#     print(f"Evolo cs - {asymmetry_test(cs.optimize)}")
+#     print(f"Evolo de - {asymmetry_test(de.optimize)}")
+#     print(f"Evolo ffa - {asymmetry_test(ffa.optimize)}")
+#     print(f"Evolo hho - {asymmetry_test(hho.optimize)}")
+#     print(f"Evolo jaya - {asymmetry_test(jaya.optimize)}")
+#     print(f"Evolo woa - {asymmetry_test(woa.optimize)}")
+# # print(f"woa - {asymmetry_test(woa.woaOptimizer)}")
+# # print(f"cmaes - {asymmetry_test(cmaes.cmaesOptimizer)}")
 
-    # stat, p = stats.wilcoxon(above_arr[np.random.randint(len(above_arr))], below_arr[np.random.randint(len(below_arr))])
 
-    # # print the test statistic and p-value
-    # print("Test statistic:", stat)
-    # print("p-value:", p)
-for i in range(10):
-    print(f"cmaes - {asymmetry_test(cmaes.cmaesOptimizer)}")
-    print(f"woa - {asymmetry_test(woa.woaOptimizer)}")

@@ -4,15 +4,23 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
 sys.path.append(parent_dir)
 
+
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import random
+
 
 from optimizers.cma_es import CMAESOptimizer
 from optimizers.woa import WoaOptimizer
+
+from optimizers.EvoloPy_optimzers import EvoloPy_otimizers
+
 from prettytable import PrettyTable
 from obj_function import Obj_function
+from scipy.stats import wilcoxon
 
+from scipy.stats import ranksums, combine_pvalues,mannwhitneyu
 num_tests = 500
 
 xmin, xmax = -10, 10
@@ -22,7 +30,17 @@ bounds = [[xmin, xmax], [ymin, ymax]]
 random_individuals = np.empty(num_tests, dtype=object)
 
 cmaes = CMAESOptimizer()
-woa = WoaOptimizer()
+woa_original = WoaOptimizer()
+woa = EvoloPy_otimizers('WOA')
+bat = EvoloPy_otimizers('BAT')
+cs = EvoloPy_otimizers('CS')
+de = EvoloPy_otimizers('DE')
+ffa = EvoloPy_otimizers('FFA')
+hho = EvoloPy_otimizers('HHO')
+jaya = EvoloPy_otimizers('JAYA')
+evolo_woa = EvoloPy_otimizers('WOA')
+
+
 obj_fun = Obj_function(bounds)
 
 
@@ -87,7 +105,23 @@ def banard_test(optimizer):
 
     return np.array([below_points, above_points], dtype=object)
 
-banard_test(cmaes.cmaesOptimizer)
-banard_test(woa.woaOptimizer)
+
+# banard_test(cmaes.cmaesOptimizer)
+banard_test(woa_original.woaOptimizer)
+banard_test(woa.optimize)
+banard_test(bat.optimize)
+banard_test(cs.optimize)
+banard_test(de.optimize)
+banard_test(ffa.optimize)
+banard_test(hho.optimize)
+banard_test(jaya.optimize)
 
 
+# bat = EvoloPy_otimizers('BAT')
+# cs = EvoloPy_otimizers('CS')
+# de = EvoloPy_otimizers('DE')
+# ffa = EvoloPy_otimizers('FFA')
+# hho = EvoloPy_otimizers('HHO')
+# jaya = EvoloPy_otimizers('JAYA')
+# evolo_woa = EvoloPy_otimizers('WOA')
+# obj_fun = Obj_function(bounds)
