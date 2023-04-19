@@ -7,3 +7,4 @@ fcmaes
 cma
 PyQt5
 matplotlib
+prettytable

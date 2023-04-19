@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QSizePolicy, QWidget, QVB
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-from thread import TestThread
+from thread import WorkerThread
 from asymmetry_test.asymmetry_test import Asymmetry_tester 
 from optimizers.woa import WoaOptimizer
 from optimizers.cma_es import CMAESOptimizer
@@ -17,8 +17,10 @@ from optimizers.EvoloPy_optimzers import EvoloPy_otimizers
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5 import uic
+from PyQt5.QtCore import QThread
 
 tester = Asymmetry_tester()
+
 
 cmaes = CMAESOptimizer()
 bat = EvoloPy_otimizers('BAT')
@@ -62,30 +64,30 @@ class MyMainWindow(QMainWindow):
 
         tester.progress_update.connect(self.progress_bar.setValue)
 
-        def on_button_clicked(self):
+    def on_button_clicked(self):
         global selected_alg
         selected_alg = selected_alg.lower()
-        self.thread = QThread()
-        self.worker = WorkerThread()
-        self.worker.setAlg(selected_alg)
+        # self.thread = QThread()
+        # self.worker = WorkerThread()
+        # self.worker.setAlg(selected_alg)
 
-        self.worker.moveToThread(self.thread)
-        self.thread.started.connect(self.worker.run)
-        self.worker.finished.connect(self.thread.quit)
-        self.worker.finished.connect(self.worker.deleteLater)
-        self.thread.finished.connect(self.thread.deleteLater)
-
-        self.thread.start()
-        
-        # obj = globals()[selected_alg]
-        # method = getattr(obj, "optimize")
-        # fig, p_value = tester.asymmetry_test(method)
+        # self.worker.moveToThread(self.thread)
+        # self.thread.started.connect(self.worker.run)
+        # self.worker.finished.connect(self.thread.quit)
+        # self.worker.finished.connect(self.worker.deleteLater)
+        # self.thread.finished.connect(self.thread.deleteLater)
+        # self.worker.progress.connect(self.progress_bar.setValue)
+        # self.thread.start()
+            
+        obj = globals()[selected_alg]
+        method = getattr(obj, "optimize")
+        fig, p_value = tester.asymmetry_test(method)
 
         # clear the canvas and redraw the new graph
         self.canvas.figure.clear()
-        # self.canvas.figure = fig
-        # self.canvas.draw()
-        # self.label.setText(f"The p-value of {selected_alg} is {str(p_value)}")
+        self.canvas.figure = fig
+        self.canvas.draw()
+        self.label.setText(f"The p-value of {selected_alg} is {str(p_value)}")
         
         
     def on_combo_box_index_changed(self,index):

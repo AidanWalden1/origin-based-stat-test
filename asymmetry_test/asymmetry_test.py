@@ -59,6 +59,7 @@ class Asymmetry_tester(QObject):
 
         for i in range(num_tests):
             progress = int((i+1)/num_tests * 100)  # Calculate progress as a percentage
+            print(progress)
             self.progress_update.emit(progress)  # Emit progress signal
 
             random_individuals[i], best_fit[i] = optimizer(bounds, obj_fun.bimodal_objective)
