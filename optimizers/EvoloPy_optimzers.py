@@ -3,10 +3,26 @@ from EvoloPy import *
 from EvoloPy.optimizer import run
 
 class EvoloPy_otimizers:
-    def __init__(self,optimzer,popSize = 50,iterations=30):
+    def __init__(self,optimzer,popsize = 50,iterations=30):
         self.optimizer = optimzer
-        self.popSize = popSize
+        self.popsize = popsize
         self.iterations = iterations
+
+    @property
+    def iterations(self):
+        return self._iterations
+
+    @iterations.setter
+    def iterations(self, value):
+        self._iterations = value
+
+    @property
+    def popsize(self):
+        return self._popsize
+
+    @popsize.setter
+    def popsize(self, value):
+        self._popsize = value
     
 
 
@@ -31,25 +47,10 @@ class EvoloPy_otimizers:
     }
 
     def optimize(self,bounds,obj_func):
-        self.params = {"PopulationSize": self.popSize, "Iterations": self.iterations}
+        self.params = {"PopulationSize": self.popsize, "Iterations": self.iterations}
+        # print(self.popsize)
         res = run([self.optimizer], self.objectivefunc, self.NumOfRuns, self.params, self.export_flags)
         return res[0][1],res[0][0]
-    
-    @property
-    def iterations(self):
-        return self._iterations
-
-    @iterations.setter
-    def iterations(self, value):
-        self._iterations = value
-
-    @property
-    def popsize(self):
-        return self._popsize
-
-    @iterations.setter
-    def popsize(self, value):
-        self._popsize = value
  
         
 

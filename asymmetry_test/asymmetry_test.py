@@ -25,7 +25,6 @@ from scipy.stats import ranksums, combine_pvalues,mannwhitneyu
 
 from PyQt5.QtCore import *
 
-num_tests = 500
 
 xmin, xmax = -10, 10
 ymin, ymax = -8, 15
@@ -45,14 +44,30 @@ jaya = EvoloPy_otimizers('JAYA')
 evolo_woa = EvoloPy_otimizers('WOA')
 obj_fun = Obj_function(bounds)
 
-random_individuals = np.empty(num_tests, dtype=object)
-best_fit = np.empty(num_tests, dtype=object)
 
 
 # fig, (abv, bel) = plt.subplots(2, 1)
 class Asymmetry_tester(QObject):
+    def __init__(self, runs = 500):
+        super().__init__()
+        self.runs = runs
+
+    @property
+    def runs(self):
+        return self._runs
+
+    @runs.setter
+    def runs(self, value):
+        self._runs = value
+
+
     progress_update = pyqtSignal(int)
     def asymmetry_test(self, optimizer):
+        
+        num_tests = self.runs
+        
+        random_individuals = np.empty(num_tests, dtype=object)
+        best_fit = np.empty(num_tests, dtype=object)
         
         below_arr = []
         above_arr =[]
@@ -96,8 +111,11 @@ class Asymmetry_tester(QObject):
         # print("/////////////////////////////////////////////////////////")
         # print(below_reordered_list)
 
-        abv_len = len(above_reordered_list[0])
-        bel_len = len(below_reordered_list[0])
+        try:
+            abv_len = len(above_reordered_list[0])
+            bel_len = len(below_reordered_list[0])
+        except IndexError:
+            return 0
 
         # print(bel_len)
         # print(abv_len)
