@@ -21,7 +21,7 @@ from PyQt5.QtCore import QThread
 from PyQt5.QtCore import pyqtSlot
 
 tester = Asymmetry_tester()
-
+global iterations
 
 cmaes = CMAESOptimizer()
 bat = EvoloPy_otimizers('BAT')
@@ -36,6 +36,8 @@ class MyMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         selected_alg = None
+        iterations = 30
+        self.validator = QIntValidator()
 
         # create a Matplotlib canvas widget
         self.figure = Figure()
@@ -46,6 +48,10 @@ class MyMainWindow(QMainWindow):
         self.combobox.currentIndexChanged.connect(self.on_combo_box_index_changed)
         self.combobox.addItems(['CMAES', 'BAT', 'CS','DE','FFA','HHO','JAYA','WOA'])
 
+        self.iterationBox = QLineEdit(self)
+        self.iterationBox.setValidator(self.validator)
+        self.iterationBox.setText(str(iterations))
+
 
         self.button = QPushButton("Test for asymmetry", self)
         self.button.move(10, 10)
@@ -53,10 +59,14 @@ class MyMainWindow(QMainWindow):
 
         self.progress_bar = QProgressBar(self)
 
+        param_choosers = QHBoxLayout()
+        param_choosers.addWidget(self.combobox)
+        param_choosers.addWidget(self.iterationBox)
+
         # add the Matplotlib canvas widget to the main window
         central_widget = QWidget()
         layout = QVBoxLayout(central_widget)
-        layout.addWidget(self.combobox)
+        layout.addLayout(param_choosers)
         layout.addWidget(self.canvas)
         layout.addWidget(self.button)
         layout.addWidget(self.label)
@@ -94,13 +104,21 @@ class MyMainWindow(QMainWindow):
     def on_combo_box_index_changed(self,index):
     # update the label when the combo box selection changes
         global selected_alg
+        global iterations 
         selected_alg = self.combobox.currentText()
+        self.iterationBox.setText("123")
 
-    def on_worker_finished(self, fig, p_value):
+        selected = selected_alg.lower()
+        obj = globals()[selected]
+    
+        iterations = obj.iterations
+        print(iterations)
+
+    def on_worker_finished(self, fig, p_value,alg_name):
         self.canvas.figure.clear()
         self.canvas.figure = fig
         self.canvas.draw()
-        self.label.setText(f"The p-value of {selected_alg} is {str(p_value)}")
+        self.label.setText(f"The p-value of {alg_name} is {str(p_value)}")
 
 
 
