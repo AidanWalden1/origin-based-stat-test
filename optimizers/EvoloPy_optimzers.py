@@ -7,7 +7,7 @@ class EvoloPy_otimizers:
         self.optimizer = optimzer
         self.popSize = popSize
         self.iterations = iterations
-        self.params = {"PopulationSize": self.popSize, "Iterations": self.iterations}
+    
 
 
     # Select benchmark function"
@@ -31,8 +31,26 @@ class EvoloPy_otimizers:
     }
 
     def optimize(self,bounds,obj_func):
+        self.params = {"PopulationSize": self.popSize, "Iterations": self.iterations}
         res = run([self.optimizer], self.objectivefunc, self.NumOfRuns, self.params, self.export_flags)
         return res[0][1],res[0][0]
+    
+    @property
+    def iterations(self):
+        return self._iterations
+
+    @iterations.setter
+    def iterations(self, value):
+        self._iterations = value
+
+    @property
+    def popsize(self):
+        return self._popsize
+
+    @iterations.setter
+    def popsize(self, value):
+        self._popsize = value
+ 
         
 
 
