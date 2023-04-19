@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5 import uic
 from PyQt5.QtCore import QThread
+from PyQt5.QtCore import pyqtSlot
 
 tester = Asymmetry_tester()
 
@@ -64,36 +65,43 @@ class MyMainWindow(QMainWindow):
 
         tester.progress_update.connect(self.progress_bar.setValue)
 
+
+
     def on_button_clicked(self):
         global selected_alg
-        selected_alg = selected_alg.lower()
-        # self.thread = QThread()
-        # self.worker = WorkerThread()
-        # self.worker.setAlg(selected_alg)
+        selected_alg = selected_alg.lower() 
 
-        # self.worker.moveToThread(self.thread)
-        # self.thread.started.connect(self.worker.run)
-        # self.worker.finished.connect(self.thread.quit)
-        # self.worker.finished.connect(self.worker.deleteLater)
-        # self.thread.finished.connect(self.thread.deleteLater)
-        # self.worker.progress.connect(self.progress_bar.setValue)
-        # self.thread.start()
-            
-        obj = globals()[selected_alg]
-        method = getattr(obj, "optimize")
-        fig, p_value = tester.asymmetry_test(method)
+        self.thread = QThread()
+        self.worker = WorkerThread()
+        self.worker.setAlg(selected_alg)
 
-        # clear the canvas and redraw the new graph
-        self.canvas.figure.clear()
-        self.canvas.figure = fig
-        self.canvas.draw()
-        self.label.setText(f"The p-value of {selected_alg} is {str(p_value)}")
+
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.worker.asymmetry_test.progress_update.connect(self.update_progress_bar)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+        self.worker.progress.connect(self.progress_bar.setValue)
+        self.worker.finished.connect(self.on_worker_finished)
         
+        self.thread.start()
+            
+    @pyqtSlot(int)
+    def update_progress_bar(self, progress):
+        self.progress_bar.setValue(progress)
         
     def on_combo_box_index_changed(self,index):
     # update the label when the combo box selection changes
         global selected_alg
         selected_alg = self.combobox.currentText()
+
+    def on_worker_finished(self, fig, p_value):
+        self.canvas.figure.clear()
+        self.canvas.figure = fig
+        self.canvas.draw()
+        self.label.setText(f"The p-value of {selected_alg} is {str(p_value)}")
+
 
 
 if __name__ == '__main__':

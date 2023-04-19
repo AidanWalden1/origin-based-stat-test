@@ -24,7 +24,7 @@ woa = EvoloPy_otimizers('WOA')
 
 
 class WorkerThread(QObject):
-    finished = pyqtSignal(object)
+    finished = pyqtSignal(object,object)
     progress = pyqtSignal(int)
     asymmetry_test = Asymmetry_tester()
     alg = ''
@@ -36,8 +36,5 @@ class WorkerThread(QObject):
         selected_alg = self.alg.lower()
         obj = globals()[selected_alg]
         method = getattr(obj, "optimize")
-        print("inside thread")
-        self.progress.emit(tester.progress_update)
-        fig, p_value = tester.asymmetry_test(method)
-        print('done')
-        self.finished.emit(self)
+        fig, p_value = self.asymmetry_test.asymmetry_test(method)
+        self.finished.emit(fig,p_value)
