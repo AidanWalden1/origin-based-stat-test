@@ -1,5 +1,6 @@
 import os
 import sys
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
 sys.path.append(parent_dir)
@@ -13,6 +14,19 @@ from asymmetry_test.asymmetry_test import Asymmetry_tester
 from optimizers.woa import WoaOptimizer
 from optimizers.cma_es import CMAESOptimizer
 from optimizers.EvoloPy_optimzers import EvoloPy_otimizers
+import importlib
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtCore import Qt
+
+
+from add_alg_dialog import AddAlgorithmDialog
+
+
+import shutil
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -22,30 +36,25 @@ from PyQt5.QtCore import pyqtSlot
 
 global iterations
 
-cmaes = CMAESOptimizer()
-bat = EvoloPy_otimizers('BAT')
-cs = EvoloPy_otimizers('CS')
-de = EvoloPy_otimizers('DE')
-ffa = EvoloPy_otimizers('FFA')
-hho = EvoloPy_otimizers('HHO')
-jaya = EvoloPy_otimizers('JAYA')
-woa = EvoloPy_otimizers('WOA')
-
 class MyMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         selected_alg = None
         iterations = 30
+
         self.validator = QIntValidator()
 
+
         # create a Matplotlib canvas widget
-        self.figure = Figure()
-        self.canvas = FigureCanvas(self.figure)
+        # self.figure = Figure()
+        # self.canvas = FigureCanvas(self.figure)
+        
+        self.canvas = FigureCanvas(plt.Figure())
+        self.setCentralWidget(self.canvas)
 
         label2 = QLabel("Enter iterations:")
         self.iterationBox = QLineEdit(self)
         self.iterationBox.setValidator(self.validator)
-        self.iterationBox.setText(str(cmaes.iterations))
         
         label3 = QLabel("Enter population size:")
         self.popSizeBox = QLineEdit(self)
@@ -60,7 +69,7 @@ class MyMainWindow(QMainWindow):
         label1 = QLabel("Choose algorithm:")
         self.combobox = QComboBox(self)
         self.combobox.currentIndexChanged.connect(self.on_combo_box_index_changed)
-        self.combobox.addItems(['CMAES', 'BAT', 'CS','DE','FFA','HHO','JAYA','WOA'])
+        self.combobox.addItems(['CMAES', 'BAT', 'CS','DE','FFA','GA','GWO','HHO','JAYA','MFO','MVO','PSO','SCA','SSA','WOA',])
 
         self.label = QLabel(self)
 
@@ -69,7 +78,13 @@ class MyMainWindow(QMainWindow):
         self.button.move(10, 10)
         self.button.clicked.connect(self.on_button_clicked)
 
+        self.addOptimizerBtn = QPushButton("Add optimizer", self)
+        self.addOptimizerBtn.clicked.connect(self.showDialog)
+
         self.progress_bar = QProgressBar(self)
+
+        self.position_label = QLabel()
+        self.statusBar().addWidget(self.position_label)
 
         param1_layout = QHBoxLayout()
         param1_layout.addWidget(label1)
@@ -92,18 +107,17 @@ class MyMainWindow(QMainWindow):
         param_choosers.addLayout(param2_layout)
         param_choosers.addLayout(param3_layout)
         param_choosers.addLayout(param4_layout)
+        param_choosers.addWidget(self.addOptimizerBtn)
 
         # add the Matplotlib canvas widget to the main window
         central_widget = QWidget()
         layout = QVBoxLayout(central_widget)
         layout.addLayout(param_choosers)
         layout.addWidget(self.canvas)
-        layout.addWidget(self.button)
         layout.addWidget(self.label)
+        layout.addWidget(self.button)
         layout.addWidget(self.progress_bar)
         self.setCentralWidget(central_widget)
-    
-
 
 
     def on_button_clicked(self):
@@ -125,36 +139,67 @@ class MyMainWindow(QMainWindow):
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.run)
         self.worker.asymmetry_test.progress_update.connect(self.update_progress_bar)
-        self.worker.finished.connect(self.thread.quit)
-        self.worker.finished.connect(self.worker.deleteLater)
         self.worker.update_label.connect(self.update_label_text)
-        self.thread.finished.connect(self.thread.deleteLater)
         self.worker.progress.connect(self.progress_bar.setValue)
-        self.worker.finished.connect(self.on_worker_finished)
+        self.worker.finishedTest.connect(self.on_worker_finished)
+        self.worker.finishedTest.connect(self.thread.quit)
         
         self.thread.start()
         
     def on_combo_box_index_changed(self,index):
         global selected_alg
         global iterations 
+
         selected_alg = self.combobox.currentText()
 
         selected = selected_alg.lower()
-        obj = globals()[selected]
     
-        iterations = obj.iterations
+        self.thread = WorkerThread()
+        
+        iterations = self.thread.getIterations(selected)
+
         self.iterationBox.setText(str(iterations))
 
         self.popSizeBox.setText("")
 
-    def on_worker_finished(self, fig, p_value,alg_name):
+    def on_figure_hover(self, event):
+        x = event.xdata 
+        if x is not None:
+            x = int(x)
+            self.position_label.setText(f'press to see all best indivdual a t= {str(x)}')
+        else:
+            self.position_label.setText('')
+
+    def showDialog(self):
+        filename, _ = QFileDialog.getOpenFileName(self, 'Select file', os.getenv('HOME'), 'Python files (*.py)')
+        if filename:
+            print('Selected file:', filename)
+            algorithm_dialog = AddAlgorithmDialog(filename)
+            if algorithm_dialog.exec_() == QDialog.Accepted:
+                algorithm_name = algorithm_dialog.line_edit.text()
+                dest_folder = parent_dir + '\\MMP\\AddOptimizers'
+                dest_file = os.path.join(dest_folder, f'{algorithm_name}.py')
+                try:
+                    shutil.copy(filename, dest_file)
+                    QMessageBox.information(self, 'Success', 'File saved successfully.')
+                    self.combobox.addItem(algorithm_name)
+
+                    
+                except Exception as e:
+                    QMessageBox.critical(self, 'Error', f'Error saving file: {str(e)}')
+        
+        
+
+    def on_worker_finished(self, fig, p_value,alg_name,individuals):
         if fig == 0:
             return
         
         self.canvas.figure.clear()
         self.canvas.figure = fig
         self.canvas.draw()
+        self.canvas.mpl_connect('motion_notify_event', self.on_figure_hover)
         self.label.setText(f"The p-value of {alg_name} is {str(p_value)}")
+        print(individuals)
 
         self.popSizeBox.setText("")
 
