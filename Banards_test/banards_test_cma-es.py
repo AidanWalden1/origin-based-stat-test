@@ -39,6 +39,7 @@ ffa = EvoloPy_otimizers('FFA')
 hho = EvoloPy_otimizers('HHO')
 jaya = EvoloPy_otimizers('JAYA')
 evolo_woa = EvoloPy_otimizers('WOA')
+ga = EvoloPy_otimizers('GA')
 
 
 obj_fun = Obj_function(bounds)
@@ -107,6 +108,7 @@ def banard_test(optimizer):
 
 
 # banard_test(cmaes.cmaesOptimizer)
+banard_test(ga.optimize)
 banard_test(woa_original.woaOptimizer)
 banard_test(woa.optimize)
 banard_test(bat.optimize)

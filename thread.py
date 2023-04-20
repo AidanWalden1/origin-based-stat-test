@@ -9,6 +9,10 @@ from PyQt5.QtCore import *
 from asymmetry_test.asymmetry_test import Asymmetry_tester
 from optimizers.cma_es import CMAESOptimizer
 from optimizers.EvoloPy_optimzers import EvoloPy_otimizers
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtCore import Qt
 
 
 cmaes = CMAESOptimizer()
@@ -16,16 +20,24 @@ bat = EvoloPy_otimizers('BAT')
 cs = EvoloPy_otimizers('CS')
 de = EvoloPy_otimizers('DE')
 ffa = EvoloPy_otimizers('FFA')
+ga = EvoloPy_otimizers('GA')
+gwo = EvoloPy_otimizers('GWO')
 hho = EvoloPy_otimizers('HHO')
 jaya = EvoloPy_otimizers('JAYA')
+mfo = EvoloPy_otimizers('MFO')
+mvo = EvoloPy_otimizers('MVO')
+pso = EvoloPy_otimizers('PSO')
+sca = EvoloPy_otimizers('SCA')
+ssa = EvoloPy_otimizers('SSA')
 woa = EvoloPy_otimizers('WOA')
 
 
 
 class WorkerThread(QObject):
     update_label = pyqtSignal(str)
-    finished = pyqtSignal(object,object,object)
+    finishedTest = pyqtSignal(object,object,object,object)
     progress = pyqtSignal(int)
+    data_ready = pyqtSignal(str)
     asymmetry_test = Asymmetry_tester()
     alg = ''
     iterations = 0
@@ -36,6 +48,9 @@ class WorkerThread(QObject):
         self.alg = alg
     def setIterations(self, iterations):
         self.iterations = iterations
+    def getIterations(self,optimizer):
+        obj = globals()[optimizer]
+        return obj.iterations
     def setNumRuns(self, numruns):
         self.numruns = numruns
     def setPopsize(self, popsize):
@@ -49,12 +64,16 @@ class WorkerThread(QObject):
         method = getattr(obj, "optimize")
         try:
             obj.popsize = int(self.popsize)
-            self.update_label.emit(f"running {self.alg} {self.numruns} times with {self.iterations} iterations and {self.popsize} popsize, remember that running evolo optimzers with custom popsize does not work yet")
+            self.update_label.emit(f"running {self.alg} {self.numruns} times with {self.iterations} iterations and {self.popsize} popsize")
         except ValueError:
             self.update_label.emit(f"running {self.alg} {self.numruns} times with {self.iterations} iterations and default popsize")
         try:
-            fig, p_value = self.asymmetry_test.asymmetry_test(method)
-            self.finished.emit(fig,p_value,selected_alg)
+            fig, p_value, individuals = self.asymmetry_test.asymmetry_test(method)
+            self.finishedTest.emit(fig,p_value,selected_alg,individuals)
         except TypeError:
             self.update_label.emit("It looks like every run of the algorithm tended to the same maxima!!")
             self.finished.emit(0,0,0)
+
+    def stop(self):
+        self.running = False
+        self.quit()

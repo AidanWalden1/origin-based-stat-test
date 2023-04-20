@@ -37,17 +37,8 @@ class CMAESOptimizer:
             fitness = [obj_function(x) for x in solutions]
             best_solution =np.min(fitness)
             best_fit.append(best_solution)
-            # if best_solution <1.0e-09: 
-            #     return solutions[np.random.randint(len(solutions))],best_fit
             optimizer.tell(solutions, fitness)
 
-
-            # if previous_best_solution is not None:
-            #     # calculate distance between previous best solution and current best solution
-            #     distance = np.linalg.norm(best_solution - previous_best_solution)
-            #     print("Fitness value =",min(fitness),"coords = ",best_solution,f"Distance in iteration {i}: {distance}")
-            
-            # previous_best_solution = best_solution
-
+            t = solutions[np.random.randint(len(solutions))]
             if i == self._iterations - 1:
                 return solutions[np.random.randint(len(solutions))],best_fit

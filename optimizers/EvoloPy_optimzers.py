@@ -48,7 +48,6 @@ class EvoloPy_otimizers:
 
     def optimize(self,bounds,obj_func):
         self.params = {"PopulationSize": self.popsize, "Iterations": self.iterations}
-        # print(self.popsize)
         res = run([self.optimizer], self.objectivefunc, self.NumOfRuns, self.params, self.export_flags)
         return res[0][1],res[0][0]
  

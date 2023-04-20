@@ -159,11 +159,12 @@ class Asymmetry_tester(QObject):
         ax.plot(log_p_values)
         ax.set_ylabel('-log10(p)')
         ax.set_xlabel('t')
-        
 
-        return fig, min_p_value
+
+        return fig, min_p_value, random_individuals
     
-    
+    def test(self):
+        print(self.fit)
     
         
 
