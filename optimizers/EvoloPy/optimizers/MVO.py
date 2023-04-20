@@ -81,7 +81,7 @@ def MVO(objf, lb, ub, dim, N, Max_time):
 
     Time = 1
     ############################################
-    print('MVO is optimizing  "' + objf.__name__ + '"')
+
 
     timerStart = time.time()
     s.startTime = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -146,21 +146,12 @@ def MVO(objf, lb, ub, dim, N, Max_time):
                         )  # random.uniform(0,1)+lb);
 
         convergence[Time - 1] = Best_universe_Inflation_rate
-        if Time % 1 == 0:
-            print(
-                [
-                    "At iteration "
-                    + str(Time)
-                    + " the best fitness is "
-                    + str(Best_universe_Inflation_rate)
-                ]
-            )
-
         Time = Time + 1
     timerEnd = time.time()
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = convergence
+    s.bestIndividual = Best_universe
     s.optimizer = "MVO"
     s.objfname = objf.__name__
 

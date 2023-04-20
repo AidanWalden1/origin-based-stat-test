@@ -45,8 +45,6 @@ def GWO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
     Convergence_curve = numpy.zeros(Max_iter)
     s = solution()
 
-    # Loop counter
-    print('GWO is optimizing  "' + objf.__name__ + '"')
 
     timerStart = time.time()
     s.startTime = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -131,15 +129,12 @@ def GWO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
 
         Convergence_curve[l] = Alpha_score
 
-        if l % 1 == 0:
-            print(
-                ["At iteration " + str(l) + " the best fitness is " + str(Alpha_score)]
-            )
 
     timerEnd = time.time()
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = Convergence_curve
+    s.bestIndividual = Alpha_pos
     s.optimizer = "GWO"
     s.objfname = objf.__name__
 

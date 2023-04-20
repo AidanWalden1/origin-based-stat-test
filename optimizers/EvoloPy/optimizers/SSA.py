@@ -30,7 +30,6 @@ def SSA(objf, lb, ub, dim, N, Max_iteration):
 
     s = solution()
 
-    print('SSA is optimizing  "' + objf.__name__ + '"')
 
     timerStart = time.time()
     s.startTime = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -100,15 +99,6 @@ def SSA(objf, lb, ub, dim, N, Max_iteration):
                 FoodFitness = SalpFitness[i]
 
         # Display best fitness along the iteration
-        if Iteration % 1 == 0:
-            print(
-                [
-                    "At iteration "
-                    + str(Iteration)
-                    + " the best fitness is "
-                    + str(FoodFitness)
-                ]
-            )
 
         Convergence_curve[Iteration] = FoodFitness
 
@@ -119,6 +109,7 @@ def SSA(objf, lb, ub, dim, N, Max_iteration):
     s.executionTime = timerEnd - timerStart
     s.convergence = Convergence_curve
     s.optimizer = "SSA"
+    s.bestIndividual = FoodPosition
     s.objfname = objf.__name__
 
     return s

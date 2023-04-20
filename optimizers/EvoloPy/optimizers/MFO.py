@@ -50,7 +50,6 @@ def MFO(objf, lb, ub, dim, N, Max_iteration):
 
     s = solution()
 
-    print('MFO is optimizing  "' + objf.__name__ + '"')
 
     timerStart = time.time()
     s.startTime = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -155,16 +154,6 @@ def MFO(objf, lb, ub, dim, N, Max_iteration):
                     )
 
         Convergence_curve[Iteration] = Best_flame_score
-        # Display best fitness along the iteration
-        if Iteration % 1 == 0:
-            print(
-                [
-                    "At iteration "
-                    + str(Iteration)
-                    + " the best fitness is "
-                    + str(Best_flame_score)
-                ]
-            )
 
         Iteration = Iteration + 1
 
@@ -172,6 +161,7 @@ def MFO(objf, lb, ub, dim, N, Max_iteration):
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = Convergence_curve
+    s.bestIndividual = Best_flame_pos
     s.optimizer = "MFO"
     s.objfname = objf.__name__
 

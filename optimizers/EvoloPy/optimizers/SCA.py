@@ -28,8 +28,6 @@ def SCA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
     Convergence_curve = numpy.zeros(Max_iter)
     s = solution()
 
-    # Loop counter
-    print('SCA is optimizing  "' + objf.__name__ + '"')
 
     timerStart = time.time()
     s.startTime = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -77,16 +75,13 @@ def SCA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
 
         Convergence_curve[l] = Dest_score
 
-        if l % 1 == 0:
-            print(
-                ["At iteration " + str(l) + " the best fitness is " + str(Dest_score)]
-            )
 
     timerEnd = time.time()
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = Convergence_curve
     s.optimizer = "SCA"
+    s.bestIndividual = Dest_pos
     s.objfname = objf.__name__
 
     return s
