@@ -52,6 +52,7 @@ def RouletteWheelSelection(weights):
 
 
 def MVO(objf, lb, ub, dim, N, Max_time):
+    bestPos = []
 
     "parameters"
     # dim=30
@@ -146,12 +147,13 @@ def MVO(objf, lb, ub, dim, N, Max_time):
                         )  # random.uniform(0,1)+lb);
 
         convergence[Time - 1] = Best_universe_Inflation_rate
+        bestPos.append(Best_universe)
         Time = Time + 1
     timerEnd = time.time()
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = convergence
-    s.bestIndividual = Best_universe
+    s.bestIndividual = bestPos
     s.optimizer = "MVO"
     s.objfname = objf.__name__
 

@@ -12,6 +12,7 @@ from solution import solution
 
 
 def BAT(objf, lb, ub, dim, N, Max_iteration):
+    bestPos = []
 
     n = N
     # Population size
@@ -92,18 +93,20 @@ def BAT(objf, lb, ub, dim, N, Max_iteration):
             if Fnew <= fmin:
                 best = numpy.copy(S[i, :])
                 fmin = Fnew
+        bestPos.append(best)
+            
 
         # update convergence curve
         Convergence_curve.append(fmin)
 
         # if t % 1 == 0:
         #     print(["At iteration " + str(t) + " the best fitness is " + str(fmin)])
-
+    #print(bestPos)
     timerEnd = time.time()
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = Convergence_curve
-    s.bestIndividual = best
+    s.bestIndividuals = bestPos
     s.optimizer = "BAT"
     s.objfname = objf.__name__
 

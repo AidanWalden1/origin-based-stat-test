@@ -6,6 +6,7 @@ import time
 
 
 def SSA(objf, lb, ub, dim, N, Max_iteration):
+    bestPos =[]
 
     # Max_iteration=1000
     # lb=-100
@@ -101,6 +102,7 @@ def SSA(objf, lb, ub, dim, N, Max_iteration):
         # Display best fitness along the iteration
 
         Convergence_curve[Iteration] = FoodFitness
+        bestPos.append(FoodPosition)
 
         Iteration = Iteration + 1
 
@@ -109,7 +111,7 @@ def SSA(objf, lb, ub, dim, N, Max_iteration):
     s.executionTime = timerEnd - timerStart
     s.convergence = Convergence_curve
     s.optimizer = "SSA"
-    s.bestIndividual = FoodPosition
+    s.bestIndividual = bestPos
     s.objfname = objf.__name__
 
     return s

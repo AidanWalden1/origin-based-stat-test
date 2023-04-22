@@ -20,6 +20,7 @@ import time
 
 
 def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
+    bestPos=[]
 
     # dim=30
     # SearchAgents_no=50
@@ -174,6 +175,7 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                             X[i, :] = X2.copy()
 
         convergence_curve[t] = Rabbit_Energy
+        bestPos.append(Rabbit_Location)
         # if t % 1 == 0:
             # print(
             #     [
@@ -192,7 +194,7 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
     s.optimizer = "HHO"
     s.objfname = objf.__name__
     s.best = Rabbit_Energy
-    s.bestIndividual = Rabbit_Location
+    s.bestIndividual = bestPos
 
     return s
 

@@ -12,6 +12,7 @@ import time
 
 
 def WOA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
+    bestPos =[]
 
     # dim=30
     # SearchAgents_no=50
@@ -118,6 +119,7 @@ def WOA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
         #     print(
         #         ["At iteration " + str(t) + " the best fitness is " + str(Leader_score)]
         #     )
+        bestPos.append(Leader_pos)
         t = t + 1
 
     timerEnd = time.time()
@@ -127,6 +129,6 @@ def WOA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
     s.optimizer = "WOA"
     s.objfname = objf.__name__
     s.best = Leader_score
-    s.bestIndividual = Leader_pos
+    s.bestIndividual = bestPos
 
     return s

@@ -42,18 +42,21 @@ evolo_woa = EvoloPy_otimizers('WOA')
 ga = EvoloPy_otimizers('GA')
 
 
-obj_fun = Obj_function(bounds)
 
+obj_fun = Obj_function(bounds)
+        
+all_individuals = np.empty(num_tests, dtype=object)
+random_individuals = np.empty(num_tests, dtype=object)
+best_fit = np.empty(num_tests, dtype=object)
 
 
 def banard_test(optimizer):
 
     for i in range(num_tests):
-        random_individuals[i], best_fit = optimizer(bounds, obj_fun.bimodal_objective)
-    # above = yes
-    above_counter = 0
+        all_individuals[i], best_fit[i] = optimizer(bounds, obj_fun.bimodal_objective)
+        random_individuals[i] = all_individuals[i][-1]
 
-    # below = no
+    above_counter = 0
     below_counter = 0
     range_counter = 0
 
@@ -107,7 +110,7 @@ def banard_test(optimizer):
     return np.array([below_points, above_points], dtype=object)
 
 
-# banard_test(cmaes.cmaesOptimizer)
+banard_test(cmaes.optimize)
 banard_test(ga.optimize)
 banard_test(woa_original.woaOptimizer)
 banard_test(woa.optimize)

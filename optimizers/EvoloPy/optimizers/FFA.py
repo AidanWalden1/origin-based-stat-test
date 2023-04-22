@@ -32,6 +32,7 @@ def alpha_new(alpha, NGen):
 
 
 def FFA(objf, lb, ub, dim, n, MaxGeneration):
+    bestPos=[]
 
     # General parameters
 
@@ -121,6 +122,7 @@ def FFA(objf, lb, ub, dim, n, MaxGeneration):
 
         IterationNumber = k
         BestQuality = fbest
+        bestPos.append(nbest)
 
         # if k % 1 == 0:
         #     print(
@@ -129,7 +131,7 @@ def FFA(objf, lb, ub, dim, n, MaxGeneration):
     #
     ####################### End main loop
     timerEnd = time.time()
-    s.bestIndividual = nbest
+    s.bestIndividual = bestPos
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = convergence

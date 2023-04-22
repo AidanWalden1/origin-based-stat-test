@@ -13,6 +13,7 @@ import time
 
 
 def MFO(objf, lb, ub, dim, N, Max_iteration):
+    bestPos = []
 
     # Max_iteration=1000
     # lb=-100
@@ -154,6 +155,7 @@ def MFO(objf, lb, ub, dim, N, Max_iteration):
                     )
 
         Convergence_curve[Iteration] = Best_flame_score
+        bestPos.append(Best_flame_pos)
 
         Iteration = Iteration + 1
 
@@ -161,7 +163,7 @@ def MFO(objf, lb, ub, dim, N, Max_iteration):
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = Convergence_curve
-    s.bestIndividual = Best_flame_pos
+    s.bestIndividual = bestPos
     s.optimizer = "MFO"
     s.objfname = objf.__name__
 

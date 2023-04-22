@@ -25,6 +25,7 @@ class CMAESOptimizer:
 
     
     def optimize(self, bounds, obj_function):
+        t =[]
         best_fit =[]
         start_points = [np.random.uniform(low=bounds[0][0], high=bounds[0][1]), np.random.uniform(low=bounds[1][0], high=bounds[1][1])]
         options = {'maxiter': 50, 'verbose': -9, 'bounds': ([bounds[0][0], bounds[1][0]], [bounds[0][1], bounds[1][1]])}
@@ -39,6 +40,6 @@ class CMAESOptimizer:
             best_fit.append(best_solution)
             optimizer.tell(solutions, fitness)
 
-            t = solutions[np.random.randint(len(solutions))]
+            t.append(solutions[np.random.randint(len(solutions))])
             if i == self._iterations - 1:
-                return solutions[np.random.randint(len(solutions))],best_fit
+                return t,best_fit

@@ -13,7 +13,7 @@ import time
 
 
 def GWO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
-
+    bestPos =[]
     # Max_iter=1000
     # lb=-100
     # ub=100
@@ -128,13 +128,14 @@ def GWO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                 Positions[i, j] = (X1 + X2 + X3) / 3  # Equation (3.7)
 
         Convergence_curve[l] = Alpha_score
+        bestPos.append(Alpha_pos)
 
 
     timerEnd = time.time()
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = Convergence_curve
-    s.bestIndividual = Alpha_pos
+    s.bestIndividual = bestPos
     s.optimizer = "GWO"
     s.objfname = objf.__name__
 

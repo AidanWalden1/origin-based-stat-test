@@ -18,6 +18,7 @@ import time
 
 
 def PSO(objf, lb, ub, dim, PopSize, iters):
+    bestPos = []
 
     # PSO parameters
 
@@ -92,7 +93,8 @@ def PSO(objf, lb, ub, dim, PopSize, iters):
                     vel[i, j] = -Vmax
 
                 pos[i, j] = pos[i, j] + vel[i, j]
-
+                
+        bestPos.append(gBest)
         convergence_curve[l] = gBestScore
 
     timerEnd = time.time()
@@ -100,7 +102,7 @@ def PSO(objf, lb, ub, dim, PopSize, iters):
     s.executionTime = timerEnd - timerStart
     s.convergence = convergence_curve
     s.optimizer = "PSO"
-    s.bestIndividual = gBest
+    s.bestIndividual = bestPos
     s.objfname = objf.__name__
 
     return s

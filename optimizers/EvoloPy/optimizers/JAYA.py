@@ -8,6 +8,7 @@ import time
 
 
 def JAYA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
+    bestPos =[]
 
     # Best and Worst position initialization
     Best_pos = numpy.zeros(dim)
@@ -101,6 +102,7 @@ def JAYA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                 Worst_pos = Positions[i, :].copy()
 
         Convergence_curve[l] = Best_score
+        bestPos.append(Best_pos)
 
         # if l % 1 == 0:
         #     print(
@@ -113,6 +115,6 @@ def JAYA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
     s.convergence = Convergence_curve
     s.optimizer = "JAYA"
     s.objfname = objf.__name__
-    s.bestIndividual = Best_pos
+    s.bestIndividual = bestPos
 
     return s

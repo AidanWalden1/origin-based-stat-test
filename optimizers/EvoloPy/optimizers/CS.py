@@ -11,7 +11,7 @@ import time
 from solution import solution
 
 
-def get_cuckoos(nest, best, lb, ub, n, dim):
+def get_cuckoos(nest, best, lb, ub, n, dim):  
 
     # perform Levy flights
     tempnest = numpy.zeros((n, dim))
@@ -82,6 +82,8 @@ def empty_nests(nest, pa, n, dim):
 
 
 def CS(objf, lb, ub, dim, n, N_IterTotal):
+    
+    bestPos=[]
 
     # lb=-1
     # ub=1
@@ -141,6 +143,7 @@ def CS(objf, lb, ub, dim, n, N_IterTotal):
         if fnew < fmin:
             fmin = fnew
             bestnest = best
+        bestPos.append(best)
 
         # if iter % 10 == 0:
         #     print(["At iteration " + str(iter) + " the best fitness is " + str(fmin)])
@@ -150,7 +153,7 @@ def CS(objf, lb, ub, dim, n, N_IterTotal):
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = convergence
-    s.bestIndividual = best
+    s.bestIndividual = bestPos
     s.optimizer = "CS"
     s.objfname = objf.__name__
 

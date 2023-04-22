@@ -348,6 +348,7 @@ def sortPopulation(population, scores):
 
 
 def GA(objf, lb, ub, dim, popSize, iters):
+    bestPos =[]
 
     """
     This is the main method which implements GA
@@ -416,10 +417,11 @@ def GA(objf, lb, ub, dim, popSize, iters):
         ga, scores = sortPopulation(ga, scores)
 
         convergence_curve[l] = bestScore
+        bestPos.append(bestIndividual)
 
 
     timerEnd = time.time()
-    s.bestIndividual = bestIndividual
+    s.bestIndividual = bestPos
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = convergence_curve

@@ -8,6 +8,7 @@ from solution import solution
 # mutation factor = [0.5, 2]
 # crossover_ratio = [0,1]
 def DE(objf, lb, ub, dim, PopSize, iters):
+    bestPos =[]
 
     mutation_factor = 0.5
     crossover_ratio = 0.7
@@ -102,6 +103,7 @@ def DE(objf, lb, ub, dim, PopSize, iters):
                 if mutant_fitness < s.best:
                     s.best = mutant_fitness
                     s.leader_solution = mutant_sol
+            bestPos.append(s.leader_solution)
 
         convergence_curve[t] = s.best
         # if t % 1 == 0:
@@ -118,7 +120,7 @@ def DE(objf, lb, ub, dim, PopSize, iters):
         s.convergence = convergence_curve
         s.optimizer = "DE"
         s.objfname = objf.__name__
-        s.bestIndividual = s.leader_solution 
+        s.bestIndividual = bestPos
 
     # return solution
     return s

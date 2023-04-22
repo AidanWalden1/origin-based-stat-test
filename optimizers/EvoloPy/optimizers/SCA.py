@@ -8,6 +8,7 @@ import time
 
 
 def SCA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
+    bestPos=[]
 
     # destination_pos
     Dest_pos = numpy.zeros(dim)
@@ -74,6 +75,7 @@ def SCA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                     )
 
         Convergence_curve[l] = Dest_score
+        bestPos.append(Dest_pos)
 
 
     timerEnd = time.time()
@@ -81,7 +83,7 @@ def SCA(objf, lb, ub, dim, SearchAgents_no, Max_iter):
     s.executionTime = timerEnd - timerStart
     s.convergence = Convergence_curve
     s.optimizer = "SCA"
-    s.bestIndividual = Dest_pos
+    s.bestIndividual = bestPos
     s.objfname = objf.__name__
 
     return s

@@ -66,6 +66,8 @@ class Asymmetry_tester(QObject):
         
         num_tests = self.runs
         
+        
+        all_individuals = np.empty(num_tests, dtype=object)
         random_individuals = np.empty(num_tests, dtype=object)
         best_fit = np.empty(num_tests, dtype=object)
         
@@ -75,8 +77,9 @@ class Asymmetry_tester(QObject):
         for i in range(num_tests):
             progress = int((i+1)/num_tests * 100)  # Calculate progress as a percentage
             self.progress_update.emit(progress)  # Emit progress signal
-            random_individuals[i], best_fit[i] = optimizer(bounds, obj_fun.bimodal_objective)
-        
+            all_individuals[i], best_fit[i] = optimizer(bounds, obj_fun.bimodal_objective)
+            random_individuals[i] = all_individuals[i][-1]
+
 
         for i,(point) in enumerate(random_individuals):
             x = point[0]
@@ -159,12 +162,10 @@ class Asymmetry_tester(QObject):
         ax.plot(log_p_values)
         ax.set_ylabel('-log10(p)')
         ax.set_xlabel('t')
+        
 
-
-        return fig, min_p_value, random_individuals
+        return fig, min_p_value,all_individuals
     
-    def test(self):
-        print(self.fit)
     
         
 

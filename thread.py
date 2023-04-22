@@ -70,9 +70,13 @@ class WorkerThread(QObject):
         try:
             fig, p_value, individuals = self.asymmetry_test.asymmetry_test(method)
             self.finishedTest.emit(fig,p_value,selected_alg,individuals)
-        except TypeError:
-            self.update_label.emit("It looks like every run of the algorithm tended to the same maxima!!")
-            self.finished.emit(0,0,0)
+        except Exception as e:
+            if type(e) == IndexError or IndexError:
+                self.update_label.emit("It looks like every run of the algorithm tended to the same maxima!!")
+                self.finishedTest.emit(0,0,0,0)
+            else:
+                self.update_label.emit(e)
+                self.finishedTest.emit(0,0,0,0)
 
     def stop(self):
         self.running = False
