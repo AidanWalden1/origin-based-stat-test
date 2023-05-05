@@ -31,6 +31,13 @@ class Obj_function:
         x3 = (b2 - b1) / (m1 - m2)
         y3 = m1 * x3 + b1
 
+        
+        self.x1 = x1
+        self.y1 = y1
+
+        self.x3 = x3*2
+        self.y3 = y3*2
+
         self.m1 = m1
         self.b1 = b1
 
