@@ -37,16 +37,12 @@ class MyMainWindow(QMainWindow):
         iterations = 30
         individuals = []
 
+        # initiates all of the GUI features
         self.xmin, self.xmax = -10, 10
         self.ymin, self.ymax = -8, 15
         self.bounds = [[self.xmin, self.xmax], [self.ymin, self.ymax]]
 
         self.validator = QIntValidator()
-
-        # create a Matplotlib canvas widget
-        # self.figure = Figure()
-        # self.canvas = FigureCanvas(self.figure)
-
         self.canvas = FigureCanvas(plt.Figure())
         self.setCentralWidget(self.canvas)
         self.second_canvas = FigureCanvas(Figure())
@@ -79,8 +75,8 @@ class MyMainWindow(QMainWindow):
         self.button.move(10, 10)
         self.button.clicked.connect(self.on_button_clicked)
 
-        self.addOptimizerBtn = QPushButton("Add optimizer", self)
-        self.addOptimizerBtn.clicked.connect(self.showDialog)
+        # self.addOptimizerBtn = QPushButton("Add optimizer", self)
+        # self.addOptimizerBtn.clicked.connect(self.showDialog)
 
         self.progress_bar = QProgressBar(self)
 
@@ -108,7 +104,7 @@ class MyMainWindow(QMainWindow):
         param_choosers.addLayout(param2_layout)
         param_choosers.addLayout(param3_layout)
         param_choosers.addLayout(param4_layout)
-        param_choosers.addWidget(self.addOptimizerBtn)
+        # param_choosers.addWidget(self.addOptimizerBtn)
 
         canvas1 = QVBoxLayout()
         canvas1.addWidget(self.canvas)
@@ -135,6 +131,7 @@ class MyMainWindow(QMainWindow):
     def on_button_clicked(self):
         global selected_alg
         global iterations
+        # starts worker thread to run tester function
         iterations = self.iterationBox.text()
         num_runs = int(self.NumRunsBox.text())
         popsize = self.popSizeBox.text()
@@ -150,18 +147,21 @@ class MyMainWindow(QMainWindow):
         self.worker.setIterations(iterations)
         self.worker.setNumRuns(num_runs)
         self.worker.setPopsize(popsize)
+        self.button.setEnabled(False)
 
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.run)
         self.worker.asymmetry_test.progress_update.connect(self.update_progress_bar)
         self.worker.update_label.connect(self.update_label_text)
         self.worker.progress.connect(self.progress_bar.setValue)
+        # Waits for thread to finish and then runs functions
         self.worker.finishedTest.connect(self.on_worker_finished)
         self.worker.finishedTest.connect(self.thread.quit)
 
         self.thread.start()
 
     def on_combo_box_index_changed(self, index):
+        # Updates global variables when combo box changes
         global selected_alg
         global iterations
 
@@ -178,6 +178,7 @@ class MyMainWindow(QMainWindow):
         self.popSizeBox.setText("")
 
     def on_figure_hover(self, event):
+        # Keeps track of mouse when it hovers over an x value on the graph.
         x = event.xdata
         if x is not None:
             x = int(x)
@@ -187,6 +188,7 @@ class MyMainWindow(QMainWindow):
             self.position_label.setText('')
 
     def on_figure_clicked(self, event):
+        # sends x data to function that spawns grpah
         global individuals
         individuals_at_t = []
         x = event.xdata
@@ -198,6 +200,7 @@ class MyMainWindow(QMainWindow):
         else:
             pass
 
+# Obsolete function. feature not finished
     def showDialog(self):
         filename, _ = QFileDialog.getOpenFileName(
             self, 'Select file', os.getenv('HOME'), 'Python files (*.py)')
@@ -219,7 +222,9 @@ class MyMainWindow(QMainWindow):
                         self, 'Error', f'Error saving file: {str(e)}')
 
     def on_worker_finished(self, fig, p_value, alg_name, all_individuals):
+        # makes graph with data from thread whhen the worker is finished
         global individuals
+        self.button.setEnabled(True)
         if fig == 0:
             return
 
@@ -234,6 +239,7 @@ class MyMainWindow(QMainWindow):
         self.popSizeBox.setText("")
 
     def create_second_canvas(self,individuals_at_t,t): 
+        # draws second canvas using values returned from thread that are held in a glboal variable
 
         obj_fun = Obj_function(self.bounds)
 
@@ -273,10 +279,11 @@ class MyMainWindow(QMainWindow):
         self.second_canvas.figure = new_fig
         self.second_canvas.draw()
 
+# updated progress bar
     @pyqtSlot(int)
     def update_progress_bar(self, progress):
         self.progress_bar.setValue(progress)
-
+# updates label
     @pyqtSlot(str)
     def update_label_text(self, text):
         self.label.setText(text)

@@ -48,6 +48,7 @@ obj_fun = Obj_function(bounds)
 
 # fig, (abv, bel) = plt.subplots(2, 1)
 class Asymmetry_tester(QObject):
+
     def __init__(self, runs = 500):
         super().__init__()
         self.runs = runs
@@ -60,59 +61,46 @@ class Asymmetry_tester(QObject):
     def runs(self, value):
         self._runs = value
 
-
+    # Define a progress update signal
     progress_update = pyqtSignal(int)
+
+    # Define a function for asymmetry testing using a given optimizer
     def asymmetry_test(self, optimizer):
         
         num_tests = self.runs
         
-        
+        # Initialize arrays for storing test results
         all_individuals = np.empty(num_tests, dtype=object)
-        random_individuals = np.empty(num_tests, dtype=object)
+        individuals = np.empty(num_tests, dtype=object)
         best_fit = np.empty(num_tests, dtype=object)
-        
         below_arr = []
         above_arr =[]
 
+        # Run optimization for the given number of tests
         for i in range(num_tests):
-            progress = int((i+1)/num_tests * 100)  # Calculate progress as a percentage
-            self.progress_update.emit(progress)  # Emit progress signal
+            # Calculate progress as a percentage
+            progress = int((i+1)/num_tests * 100)
+            # Emit progress signal
+            self.progress_update.emit(progress)
+            # Run optimization and store the results
             all_individuals[i], best_fit[i] = optimizer(bounds, obj_fun.bimodal_objective)
-            random_individuals[i] = all_individuals[i][-1]
+            individuals[i] = all_individuals[i][-1]
 
-
-        for i,(point) in enumerate(random_individuals):
+        # Separate the test results based on their location relative to the expected value
+        for i,(point) in enumerate(individuals):
             x = point[0]
             y = point[1]
             expected_y = obj_fun.get_expected_y(x)
-
-            indices = range(len(best_fit[i]))
-            log_arr = np.log(best_fit[i])
-
-            # Add labels and title
-            # abv.set_ylabel('fitness')
-            # abv.set_title('Plot when optimzer tends to other maxima')
-
-            # bel.set_ylabel('fitness')
-            # bel.set_title('Plot when optimzer tends to 0,0')
-
-            # Display the plot
-
+            arr = np.log(best_fit[i])
 
             if y > expected_y:
-                above_arr.append(log_arr)
-                # abv.plot(indices,log_arr)
+                above_arr.append(arr)
             elif y < expected_y:
-                below_arr.append(log_arr)
-                # bel.plot(indices, log_arr)
+                below_arr.append(arr)
 
-
-
+        # Reorder the arrays for statistical testing
         above_reordered_list = [list(x) for x in zip(*above_arr)]
-        # print(above_reordered_list)
         below_reordered_list = [list(x) for x in zip(*below_arr)]
-        # print("/////////////////////////////////////////////////////////")
-        # print(below_reordered_list)
 
         try:
             abv_len = len(above_reordered_list[0])
@@ -120,8 +108,7 @@ class Asymmetry_tester(QObject):
         except IndexError:
             return 0
 
-        # print(bel_len)
-        # print(abv_len)
+        # Ensure that the two arrays have the same length for statistical testing
 
         for i in range(len(above_reordered_list)):
             if abv_len>bel_len:
@@ -134,14 +121,7 @@ class Asymmetry_tester(QObject):
         
 
             above_reordered_list[i] = above_reordered_list[i][:length]
-
-    
             below_reordered_list[i] = below_reordered_list[i][:length]
-
-        # print('//////////////////////edited///////////////////////////////')
-        # print(above_reordered_list)
-        # print("/////////////////////////////////////////////////////////")
-        # print(below_reordered_list)
 
 
 
@@ -155,9 +135,6 @@ class Asymmetry_tester(QObject):
         adjusted_p_values = np.minimum(1, np.array(p_values) * comparisons) # adjust p-values
         min_p_value = np.min(adjusted_p_values) 
 
-        # plt.plot(log_p_values)
-        # plt.ylabel('-log10(p)')
-        # plt.xlabel('t')
         fig = Figure()
         ax = fig.add_subplot(111)
         ax.plot(log_p_values)
@@ -167,28 +144,3 @@ class Asymmetry_tester(QObject):
 
         return fig, min_p_value,all_individuals
     
-    
-        
-
-# bat = EvoloPy_otimizers('BAT')
-# cs = EvoloPy_otimizers('CS')
-# de = EvoloPy_otimizers('DE')
-# ffa = EvoloPy_otimizers('FFA')
-# hho = EvoloPy_otimizers('HHO')
-# jaya = EvoloPy_otimizers('JAYA')
-# woa = EvoloPy_otimizers('WOA')
-
-# for i in range(1): 
-#     print(f"woa - {asymmetry_test(original_woa.woaOptimizer)}")
-#     print(f"cmaes - {asymmetry_test(cmaes.cmaesOptimizer)}")
-#     print(f"Evolo woa - {asymmetry_test(evolo_woa.optimize)}")
-#     print(f"Evolo cs - {asymmetry_test(cs.optimize)}")
-#     print(f"Evolo de - {asymmetry_test(de.optimize)}")
-#     print(f"Evolo ffa - {asymmetry_test(ffa.optimize)}")
-#     print(f"Evolo hho - {asymmetry_test(hho.optimize)}")
-#     print(f"Evolo jaya - {asymmetry_test(jaya.optimize)}")
-#     print(f"Evolo woa - {asymmetry_test(woa.optimize)}")
-# # print(f"woa - {asymmetry_test(woa.woaOptimizer)}")
-# # print(f"cmaes - {asymmetry_test(cmaes.cmaesOptimizer)}")
-
-

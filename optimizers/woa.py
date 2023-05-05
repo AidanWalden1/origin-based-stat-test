@@ -10,7 +10,7 @@ parent_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
 sys.path.append(parent_dir)
 sys.path.append(os.path.join(parent_dir, 'optimizers'))
 
-
+# THIS FILE IS NO LONGER BEING USED. WOA IMPLEMTATION NOW USED FROM EVOLOPY PKG
 
 # Add the parent directory of this script to the Python path
 import numpy as np

@@ -57,6 +57,7 @@ class WorkerThread(QObject):
         self.popsize = popsize
 
     def run(self):
+        # runs tester function on worker thread to prevent app from hanging
         self.asymmetry_test.runs = self.numruns
         selected_alg = self.alg.lower()
         obj = globals()[selected_alg]
