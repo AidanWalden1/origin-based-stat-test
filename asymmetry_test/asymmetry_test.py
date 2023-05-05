@@ -150,7 +150,8 @@ class Asymmetry_tester(QObject):
 
         p_values = [ranksums(above_reordered_list[i], below_reordered_list[i]).pvalue for i in range(comparisons)]
         log_p_values = -np.log10(p_values)
-
+        
+        #adjusted using beferonnis then we get min p-value
         adjusted_p_values = np.minimum(1, np.array(p_values) * comparisons) # adjust p-values
         min_p_value = np.min(adjusted_p_values) 
 
