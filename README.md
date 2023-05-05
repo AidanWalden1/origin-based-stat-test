@@ -1,10 +1,16 @@
-# MMP
-cma-es <br />
-![alt text](https://github.com/AidanWalden1/MMP/blob/master/cmaes.PNG)<br />
-woa <br />
-![alt text](https://github.com/AidanWalden1/MMP/blob/master/woa.PNG)<br />
+# Algorithm tester
+Lightweight cross-platform evolutionary algorithm tester
 
+## Dependencies
+pip install - r requirements.txt
 
-features to add:
-Add your own optimzer to test
-Click on a t value and get a grpah of all points at the t value
+## Running the Application
+Until the release version is available, compiling is required first using
+
+Make sure you are using Python 3+
+
+install depecdencies
+
+Python main.py
+
+If there is any trouble please email me at aiw24@aber.ac.uk
