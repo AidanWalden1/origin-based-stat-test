@@ -2,6 +2,8 @@ import os
 import shutil
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QFileDialog, QMessageBox, QDialog, QVBoxLayout, QLineEdit, QLabel
 
+# added a class that spawns a diaglog for file upload
+# Not used as add optimzer feature was not added
 class AddAlgorithmDialog(QDialog,):
     def __init__(self,filename):
         super().__init__()
