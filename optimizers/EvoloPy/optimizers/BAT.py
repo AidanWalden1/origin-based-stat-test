@@ -106,7 +106,7 @@ def BAT(objf, lb, ub, dim, N, Max_iteration):
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.executionTime = timerEnd - timerStart
     s.convergence = Convergence_curve
-    s.bestIndividuals = bestPos
+    s.bestIndividual = bestPos
     s.optimizer = "BAT"
     s.objfname = objf.__name__
 

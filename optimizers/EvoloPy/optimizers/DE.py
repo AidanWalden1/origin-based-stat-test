@@ -103,8 +103,8 @@ def DE(objf, lb, ub, dim, PopSize, iters):
                 if mutant_fitness < s.best:
                     s.best = mutant_fitness
                     s.leader_solution = mutant_sol
-            bestPos.append(s.leader_solution)
 
+        bestPos.append(s.leader_solution)
         convergence_curve[t] = s.best
         # if t % 1 == 0:
         #     print(

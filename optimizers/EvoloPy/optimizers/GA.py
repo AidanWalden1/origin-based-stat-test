@@ -411,13 +411,11 @@ def GA(objf, lb, ub, dim, popSize, iters):
 
         scores = calculateCost(objf, ga, popSize, lb, ub)
 
-        bestScore = min(scores)
-
         # Sort from best to worst
         ga, scores = sortPopulation(ga, scores)
 
-        convergence_curve[l] = bestScore
-        bestPos.append(bestIndividual)
+        convergence_curve[l] = scores[0]
+        bestPos.append(ga[0])
 
 
     timerEnd = time.time()

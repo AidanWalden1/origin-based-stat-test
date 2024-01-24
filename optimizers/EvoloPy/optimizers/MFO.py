@@ -55,6 +55,9 @@ def MFO(objf, lb, ub, dim, N, Max_iteration):
     timerStart = time.time()
     s.startTime = time.strftime("%Y-%m-%d-%H-%M-%S")
 
+    Convergence_curve[0] = Best_flame_score
+    bestPos.append(Best_flame_pos)
+
     Iteration = 1
 
     # Main loop
