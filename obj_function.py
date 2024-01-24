@@ -3,13 +3,13 @@ import numpy as np
 
 class Obj_function:
     def __init__(self, bounds):
-        self.bounds = bounds 
+        self.bounds = bounds
         # Extract xmin, xmax, ymin, ymax values from bounds array
         xmin, xmax, ymin, ymax = bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1]
 
         # Calculate slope and y-intercept for the line passing through (xmin, ymin) and (xmax, ymax)
         m1 = (ymax - ymin) / (xmax - xmin)
-        b1 = (ymax - (m1 * xmax))
+        b1 = ymax - (m1 * xmax)
 
         # Generate an array of x values from xmin to xmax using linspace function from numpy
         x1 = np.linspace(xmin, xmax)
@@ -18,8 +18,8 @@ class Obj_function:
         y1 = m1 * x1 + b1
 
         # Calculate the intersection point of the two lines using the slope-intercept form of the equations
-        x3 = 10 # -2 * b1 / (m1 + 1 / m1)
-        y3 = -10 # m1 * x3 + 2 * b1
+        x3 = -2 * b1 * m1 / (1 + m1 * m1)
+        y3 = x3 * m1 + 2 * b1
 
         self.x1 = x1
         self.y1 = y1
