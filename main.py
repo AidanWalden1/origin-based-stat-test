@@ -38,8 +38,8 @@ class MyMainWindow(QMainWindow):
         individuals = []
 
         # initiates all of the GUI features
-        self.xmin, self.xmax = -10, 10
-        self.ymin, self.ymax = -8, 15
+        self.xmin, self.xmax = -5, 15
+        self.ymin, self.ymax = -15, 5
         self.bounds = [[self.xmin, self.xmax], [self.ymin, self.ymax]]
 
         self.validator = QIntValidator()

@@ -26,8 +26,8 @@ from scipy.stats import ranksums, combine_pvalues,mannwhitneyu
 from PyQt5.QtCore import *
 
 
-xmin, xmax = -10, 10
-ymin, ymax = -8, 15
+xmin, xmax = -5, 15
+ymin, ymax = -15, 5
 bounds = [[xmin, xmax], [ymin, ymax]]
 
 cmaes = CMAESOptimizer()

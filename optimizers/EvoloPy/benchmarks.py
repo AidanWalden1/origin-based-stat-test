@@ -341,8 +341,8 @@ def F23(L):
 sys.path.insert(0, 'C:/Users/Aidan/OneDrive/Documents/MMP')
 from obj_function import Obj_function
 
-xmin, xmax = -10, 10
-ymin, ymax = -8, 15
+xmin, xmax = -5, 15
+ymin, ymax = -15, 5
 bounds = [[xmin, xmax], [ymin, ymax]]
 obj_fun = Obj_function(bounds)
 obj_fun.bimodal_objective
@@ -377,7 +377,7 @@ def getFunctionDetails(a):
         "F21": ["F21", 0, 10, 4],
         "F22": ["F22", 0, 10, 4],
         "F23": ["F23", 0, 10, 4],
-        "objFunc": ["objFunc", -10, 10, 2] 
+        "objFunc": ["objFunc", [xmin, ymin], [xmax, ymax], 2]
     }
     return param.get(a, "nothing")
 

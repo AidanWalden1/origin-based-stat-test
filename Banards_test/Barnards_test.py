@@ -24,8 +24,8 @@ from optimizers.EvoloPy_optimzers import EvoloPy_otimizers
 
 # Set the number of tests to run and the bounds for the objective function
 num_tests = 10
-xmin, xmax = -10, 10
-ymin, ymax = -8, 15
+xmin, xmax = -5, 15
+ymin, ymax = -15, 5
 bounds = [[xmin, xmax], [ymin, ymax]]
 
 # Create an array to hold the random individuals for each test
