@@ -29,22 +29,7 @@ from PyQt5.QtCore import *
 xmin, xmax = -5, 15
 ymin, ymax = -15, 5
 bounds = [[xmin, xmax], [ymin, ymax]]
-
-cmaes = CMAESOptimizer()
-original_woa = WoaOptimizer()
-wooa = WoaOptimizer()
-
-# BAT/CS/DE/FFA/HHO/JAYA/WOA
-bat = EvoloPy_otimizers('BAT')
-cs = EvoloPy_otimizers('CS')
-de = EvoloPy_otimizers('DE')
-ffa = EvoloPy_otimizers('FFA')
-hho = EvoloPy_otimizers('HHO')
-jaya = EvoloPy_otimizers('JAYA')
-evolo_woa = EvoloPy_otimizers('WOA')
 obj_fun = Obj_function(bounds)
-
-
 
 # fig, (abv, bel) = plt.subplots(2, 1)
 class Asymmetry_tester(QObject):
