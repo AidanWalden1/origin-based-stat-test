@@ -14,7 +14,7 @@ class CMAESOptimizer:
     @iterations.setter
     def iterations(self, value):
         self._iterations = value
-    
+
     @property
     def popsize(self):
         return self._popsize
@@ -28,7 +28,7 @@ class CMAESOptimizer:
         best_fit =[]
         #Start points randomly distributed thorugh search spoace
         start_points = [np.random.uniform(low=bounds[0][0], high=bounds[0][1]), np.random.uniform(low=bounds[1][0], high=bounds[1][1])]
-        options = {'maxiter': 50, 'verbose': -9, 'bounds': ([bounds[0][0], bounds[1][0]], [bounds[0][1], bounds[1][1]])}
+        options = {'maxiter': self._iterations, 'verbose': -9 } #, 'bounds': ([bounds[0][0], bounds[1][0]], [bounds[0][1], bounds[1][1]])}
         if self.popsize != 0:
             options['popsize'] = self.popsize
         sigma = (bounds[0][1] - bounds[0][0])/2
