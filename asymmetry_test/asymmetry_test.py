@@ -65,7 +65,7 @@ class Asymmetry_tester(QObject):
     progress_update = pyqtSignal(int)
 
     # Define a function for asymmetry testing using a given optimizer
-    def asymmetry_test(self, optimizer):
+    def asymmetry_test(self, name, optimizer):
         
         num_tests = self.runs
         
@@ -76,15 +76,22 @@ class Asymmetry_tester(QObject):
         below_arr = []
         above_arr =[]
 
-        # Run optimization for the given number of tests
-        for i in range(num_tests):
-            # Calculate progress as a percentage
-            progress = int((i+1)/num_tests * 100)
-            # Emit progress signal
-            self.progress_update.emit(progress)
-            # Run optimization and store the results
-            all_individuals[i], best_fit[i] = optimizer(bounds, obj_fun.bimodal_objective)
-            individuals[i] = all_individuals[i][-1]
+        with open(name + ".csv", "w") as output:
+            output.write("test,iteration,x,y,side,f\n")
+            # Run optimization for the given number of tests
+            for i in range(num_tests):
+                # Calculate progress as a percentage
+                progress = int((i+1)/num_tests * 100)
+                # Emit progress signal
+                self.progress_update.emit(progress)
+                # Run optimization and store the results
+                all_individuals[i], best_fit[i] = optimizer(bounds, obj_fun.bimodal_objective)
+                for j in range(len(all_individuals[i])):
+                    x = all_individuals[i][j][0]
+                    y = all_individuals[i][j][1]
+                    exp_y = 0 if obj_fun.get_expected_y(x) < y else 1
+                    output.write(str(i) + "," + str(j) + "," + str(x) + "," + str(y) + "," + str(exp_y) + "," + str(best_fit[i][j]) + "\n")
+                individuals[i] = all_individuals[i][-1]
 
         # Separate the test results based on their location relative to the expected value
         for i,(point) in enumerate(individuals):
@@ -92,7 +99,6 @@ class Asymmetry_tester(QObject):
             y = point[1]
             expected_y = obj_fun.get_expected_y(x)
             arr = np.log(best_fit[i])
-
             if y > expected_y:
                 above_arr.append(arr)
             elif y < expected_y:
@@ -102,11 +108,8 @@ class Asymmetry_tester(QObject):
         above_reordered_list = [list(x) for x in zip(*above_arr)]
         below_reordered_list = [list(x) for x in zip(*below_arr)]
 
-        try:
-            abv_len = len(above_reordered_list[0])
-            bel_len = len(below_reordered_list[0])
-        except IndexError:
-            return 0
+        abv_len = len(above_reordered_list[0])
+        bel_len = len(below_reordered_list[0])
 
         # Ensure that the two arrays have the same length for statistical testing
 
@@ -117,8 +120,6 @@ class Asymmetry_tester(QObject):
                 length = abv_len
             else:
                 break
-
-        
 
             above_reordered_list[i] = above_reordered_list[i][:length]
             below_reordered_list[i] = below_reordered_list[i][:length]
