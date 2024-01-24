@@ -110,8 +110,8 @@ def MFO(objf, lb, ub, dim, N, Max_iteration):
 
         #
         #   # Update the position best flame obtained so far
-        Best_flame_score = fitness_sorted[0]
-        Best_flame_pos = sorted_population[0, :]
+        Convergence_curve[Iteration] = best_flame_fitness[0]
+        bestPos.append(numpy.copy(best_flames[0, :]))
         #
         previous_population = Moth_pos
         previous_fitness = Moth_fitness
@@ -153,9 +153,6 @@ def MFO(objf, lb, ub, dim, N, Max_iteration):
                         distance_to_flame * math.exp(b * t) * math.cos(t * 2 * math.pi)
                         + sorted_population[Flame_no, j]
                     )
-
-        Convergence_curve[Iteration] = Best_flame_score
-        bestPos.append(Best_flame_pos)
 
         Iteration = Iteration + 1
 
