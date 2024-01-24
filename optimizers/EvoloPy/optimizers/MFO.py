@@ -55,10 +55,7 @@ def MFO(objf, lb, ub, dim, N, Max_iteration):
     timerStart = time.time()
     s.startTime = time.strftime("%Y-%m-%d-%H-%M-%S")
 
-    Convergence_curve[0] = Best_flame_score
-    bestPos.append(Best_flame_pos)
-
-    Iteration = 1
+    Iteration = 0
 
     # Main loop
     while Iteration < Max_iteration:
@@ -75,7 +72,7 @@ def MFO(objf, lb, ub, dim, N, Max_iteration):
             # evaluate moths
             Moth_fitness[i] = objf(Moth_pos[i, :])
 
-        if Iteration == 1:
+        if Iteration == 0:
             # Sort the first population of moths
             fitness_sorted = numpy.sort(Moth_fitness)
             I = numpy.argsort(Moth_fitness)
