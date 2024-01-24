@@ -17,26 +17,15 @@ class Obj_function:
         # Calculate corresponding y values for the line passing through (xmin, ymin) and (xmax, ymax)
         y1 = m1 * x1 + b1
 
-        # Calculate slope and y-intercept for the line perpendicular to the previous line, passing through (xmin, 0)
-        m2 = -1 * m1
-        b2 = 0
-
-        # Generate an array of x values from xmin to xmax using linspace function from numpy
-        x2 = np.linspace(xmin, xmax)
-
-        # Calculate corresponding y values for the perpendicular line passing through (xmin, 0)
-        y2 = m2 * x2 + b2
-
         # Calculate the intersection point of the two lines using the slope-intercept form of the equations
-        x3 = (b2 - b1) / (m1 - m2)
-        y3 = m1 * x3 + b1
+        x3 = 10 # -2 * b1 / (m1 + 1 / m1)
+        y3 = -10 # m1 * x3 + 2 * b1
 
-        
         self.x1 = x1
         self.y1 = y1
 
-        self.x3 = x3*2
-        self.y3 = y3*2
+        self.x3 = x3
+        self.y3 = y3
 
         self.m1 = m1
         self.b1 = b1
